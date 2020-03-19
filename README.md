@@ -1,6 +1,13 @@
 # gpwebpay
+
 GPWebPay Gateway access with python
 
+## How to run the tests
+
+To run the tests:
+`pytest tests/tests.py`
+
+## Configuration (WIP)
 To use this module construct a PaymentGateway object with a dictionary
 with the details of your account. If you do not want to pass a dictionary
 with the details you can define your own environmental variables.

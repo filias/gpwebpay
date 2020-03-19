@@ -1,6 +1,6 @@
-import unittest
+import pytest
 
-import gpwebpay
+from gpwebpay.gpwebpay import PaymentGateway, GPWebPaySetupException
 
 
 DUMMY_ACCOUNT_DETAILS = dict(
@@ -22,21 +22,17 @@ DUMMY_ACCOUNT_DETAILS_INCOMPLETE = dict(DUMMY_ACCOUNT_DETAILS.items()[:3])
 # CVC2: 200
 
 
-class TestGPWebPayGatewayMethods(unittest.TestCase):
-
-    def test_init_error(self):
-        with self.assertRaises(gpwebpay.GPWebPaySetupException):
-            gw = gpwebpay.PaymentGateway(**DUMMY_ACCOUNT_DETAILS_INCOMPLETE)
-
-    def test_init(self):
-        gw = gpwebpay.PaymentGateway(**DUMMY_ACCOUNT_DETAILS)
-        self.assertTrue(gw)
-
-    def test_connection(self):
-        gw = gpwebpay.PaymentGateway()
-        response = gw.request_payment()
-        self.assertEquals(response.status_code, 200)
+def test_init_error(self):
+    with self.assertRaises(GPWebPaySetupException):
+        gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS_INCOMPLETE)
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_init(self):
+    gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS)
+    self.assertTrue(gw)
+
+
+def test_connection(self):
+    gw = PaymentGateway()
+    response = gw.request_payment()
+    self.assertEquals(response.status_code, 200)
