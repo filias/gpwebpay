@@ -14,7 +14,12 @@ DUMMY_ACCOUNT_DETAILS = dict(
     GPWEBPAY_TEST_URL='https://test.3dsecure.gpwebpay.com/pgw/order.do'
 )
 
-DUMMY_ACCOUNT_DETAILS_INCOMPLETE = dict(DUMMY_ACCOUNT_DETAILS.items()[:3])
+# Here we have an incomplete account
+DUMMY_ACCOUNT_DETAILS_INCOMPLETE = {
+    key: DUMMY_ACCOUNT_DETAILS[key] for key in [
+        'GPWEBPAY_MERCHANT_ID', 'GPWEBPAY_CURRENCY', 'GPWEBPAY_DEPOSIT_FLAG'
+    ]
+}
 
 # Card for test payments
 # Card number: 4056070000000008
@@ -22,17 +27,17 @@ DUMMY_ACCOUNT_DETAILS_INCOMPLETE = dict(DUMMY_ACCOUNT_DETAILS.items()[:3])
 # CVC2: 200
 
 
-def test_init_error(self):
-    with self.assertRaises(GPWebPaySetupException):
-        gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS_INCOMPLETE)
+def test_init_error():
+    with pytest.raises(GPWebPaySetupException):
+        PaymentGateway(**DUMMY_ACCOUNT_DETAILS_INCOMPLETE)
 
 
-def test_init(self):
+def test_init():
     gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS)
-    self.assertTrue(gw)
+    assert gw
 
 
-def test_connection(self):
+def test_connection():
     gw = PaymentGateway()
     response = gw.request_payment()
-    self.assertEquals(response.status_code, 200)
+    assert response.status_code == 200
