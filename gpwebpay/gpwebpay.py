@@ -72,11 +72,10 @@ class PaymentGateway(object):
         #digest.finalize()
 
         # b) - apply EMSA-PKCS1-v1_5-ENCODE
-        pk_file = os.path.join(os.getcwd(), "../",
-                               self.account_details['GPWEBPAY_PRIVATE_KEY_NAME'])
+        pk_file = os.path.join(os.getcwd(), self.account_details['GPWEBPAY_PRIVATE_KEY_NAME'])
         with open(pk_file, "rb") as key_file:
             private_key = serialization.load_pem_private_key(key_file.read(),
-                                                             password=self.account_details['GPWEBPAY_PASSPHRASE'],
+                                                             password=self.account_details['GPWEBPAY_PASSPHRASE'].encode("UTF-8"),
                                                              backend=default_backend())
 
         # c) - apply RSASSA-PKCS1-V1_5-SIGN

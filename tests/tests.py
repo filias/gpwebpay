@@ -4,14 +4,14 @@ from gpwebpay.gpwebpay import PaymentGateway, GPWebPaySetupException
 
 
 DUMMY_ACCOUNT_DETAILS = dict(
-    GPWEBPAY_MERCHANT_ID='0987654321',
+    GPWEBPAY_MERCHANT_ID='8888880035',
     GPWEBPAY_CURRENCY='978',
     GPWEBPAY_DEPOSIT_FLAG='1',
-    GPWEBPAY_RESPONSE_URL='bla.com/callback',
-    GPWEBPAY_PRIVATE_KEY_NAME='private_key.key',
-    GPWEBPAY_PASSPHRASE='bla',
-    GPWEBPAY_PUBLIC_KEY_NAME='public_key.key',
-    GPWEBPAY_TEST_URL='https://test.3dsecure.gpwebpay.com/pgw/order.do'
+    GPWEBPAY_RESPONSE_URL='',
+    GPWEBPAY_PRIVATE_KEY_NAME='gpwebpay-pvk.key',
+    GPWEBPAY_PASSPHRASE='PyLadies2020',
+    GPWEBPAY_PUBLIC_KEY_NAME='gpe.signing_test.pem',
+    GPWEBPAY_TEST_URL='https://test.3dsecure.gpwebpay.com/pgw/order.do',
 )
 
 # Here we have an incomplete account
@@ -38,6 +38,6 @@ def test_init():
 
 
 def test_connection():
-    gw = PaymentGateway()
+    gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS)
     response = gw.request_payment()
     assert response.status_code == 200
