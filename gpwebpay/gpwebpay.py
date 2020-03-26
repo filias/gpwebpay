@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 _logger = logging.getLogger(__name__)
 
 
-class PaymentGateway(object):
+class PaymentGateway:
     keys = [
         "GPWEBPAY_" + key
         for key in [
