@@ -125,7 +125,7 @@ class PaymentGateway:
         return response
 
 
-class PaymentCallback(object):
+class PaymentCallback:
     data = OrderedDict()
     payment = None
 
