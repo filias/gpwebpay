@@ -108,3 +108,8 @@ ENV/
 
 # private keys
 *.key
+
+
+# test keys
+*.cer
+*.pem
