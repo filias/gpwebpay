@@ -157,7 +157,7 @@ class PaymentCallback:
 
         # Initialize RSA key
         pubk_file = os.path.join(
-            os.getcwd(), "../", self.account_details["GPWEBPAY_PUBLIC_KEY_NAME"]
+            os.getcwd(), self.account_details["GPWEBPAY_PUBLIC_KEY_NAME"]
         )
         with open(pubk_file, "rb") as key_file:
             public_key = serialization.load_pem_public_key(
