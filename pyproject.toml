@@ -6,6 +6,10 @@ authors = ["Filipa Andrade <filipa.andrade@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.5"
+cryptography="2.8"
+pytest="5.4.1"
+requests="2.23"
+
 
 [tool.poetry.dev-dependencies]
 
