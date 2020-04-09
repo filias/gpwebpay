@@ -5,10 +5,9 @@ description = "GPWebPay Gateway access with python"
 authors = ["Filipa Andrade <filipa.andrade@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6"
 cryptography="2.8"
 requests="2.23"
-
 
 [tool.poetry.dev-dependencies]
 black = "19.10b0"
