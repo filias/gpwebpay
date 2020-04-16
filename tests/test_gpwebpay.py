@@ -1,5 +1,7 @@
 import pytest
 
+import responses
+
 from gpwebpay.gpwebpay import PaymentGateway, GPWebPaySetupException
 
 
