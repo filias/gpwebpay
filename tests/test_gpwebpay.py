@@ -35,8 +35,11 @@ def test_init():
     gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS)
     assert gw
 
-
+@responses.activate
 def test_connection():
     gw = PaymentGateway(**DUMMY_ACCOUNT_DETAILS)
+    responses.add(
+        responses.POST, DUMMY_ACCOUNT_DETAILS["GPWEBPAY_TEST_URL"], status=200
+    )
     response = gw.request_payment()
     assert response.status_code == 200
