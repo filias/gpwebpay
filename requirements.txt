@@ -1,4 +1,0 @@
-black==19.10b0
-cryptography==2.8
-pytest==5.4.1
-requests==2.23
