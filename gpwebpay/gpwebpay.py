@@ -9,43 +9,15 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
+from .config import configuration
+
 
 _logger = logging.getLogger(__name__)
 
 
 class PaymentGateway:
-    keys = [
-        "GPWEBPAY_" + key
-        for key in [
-            "MERCHANT_ID",
-            "CURRENCY",
-            "DEPOSIT_FLAG",
-            "RESPONSE_URL",
-            "PRIVATE_KEY_NAME",
-            "PASSPHRASE",
-            "PUBLIC_KEY_NAME",
-            "TEST_URL",
-        ]
-    ]
-    account_details = {}
     data = OrderedDict()
     payment = None
-
-    def __init__(self, **kwargs):
-        # We try to get the values of the needed account details from kwargs
-        # if they are not present we try to get them from os.env
-        for key in self.keys:
-            if kwargs:
-                try:
-                    self.account_details[key] = kwargs[key]
-                except KeyError:
-                    raise GPWebPaySetupException("Not enough account details.")
-            else:
-                value = os.getenv(key)
-                if value:
-                    self.account_details[key] = value
-                else:
-                    raise GPWebPaySetupException("Not enough account details.")
 
     def _prefill_card_data(self):
         """For prefilling the card used in a previous successful payment"""
@@ -60,13 +32,13 @@ class PaymentGateway:
     def _create_data(self):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
-        self.data["MERCHANTNUMBER"] = self.account_details["GPWEBPAY_MERCHANT_ID"]
+        self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
         self.data["OPERATION"] = "CREATE_ORDER"
         self.data["ORDERNUMBER"] = "123456"  # Dummy for now
         self.data["AMOUNT"] = "10"  # Fixed for now
-        self.data["CURRENCY"] = self.account_details["GPWEBPAY_CURRENCY"]
-        self.data["DEPOSITFLAG"] = self.account_details["GPWEBPAY_DEPOSIT_FLAG"]
-        self.data["URL"] = self.account_details["GPWEBPAY_RESPONSE_URL"]
+        self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
+        self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
+        self.data["URL"] = configuration.GPWEBPAY_RESPONSE_URL
         self.data["PAYMETHOD"] = "CRD"  # Just card payments for now
         # if self.payment.payment_method == 'MPS':
         #    self._make_add_info()
@@ -81,13 +53,11 @@ class PaymentGateway:
         # digest.finalize()
 
         # b) - apply EMSA-PKCS1-v1_5-ENCODE
-        pk_file = os.path.join(
-            os.getcwd(), self.account_details["GPWEBPAY_PRIVATE_KEY_NAME"]
-        )
+        pk_file = os.path.join(os.getcwd(), configuration.GPWEBPAY_PRIVATE_KEY_NAME)
         with open(pk_file, "rb") as key_file:
             private_key = serialization.load_pem_private_key(
                 key_file.read(),
-                password=self.account_details["GPWEBPAY_PASSPHRASE"].encode("UTF-8"),
+                password=configuration.GPWEBPAY_PASSPHRASE.encode("UTF-8"),
                 backend=default_backend(),
             )
 
@@ -120,7 +90,7 @@ class PaymentGateway:
             "accept-encoding": "UTF-8",
         }
         response = requests.post(
-            self.account_details["GPWEBPAY_TEST_URL"], data=self.data, headers=headers
+            configuration.GPWEBPAY_TEST_URL, data=self.data, headers=headers
         )
         return response
 
@@ -156,9 +126,7 @@ class PaymentCallback:
         signature = base64.b64decode(signature)
 
         # Initialize RSA key
-        pubk_file = os.path.join(
-            os.getcwd(), self.account_details["GPWEBPAY_PUBLIC_KEY_NAME"]
-        )
+        pubk_file = os.path.join(os.getcwd(), configuration.GPWEBPAY_PUBLIC_KEY_NAME)
         with open(pubk_file, "rb") as key_file:
             public_key = serialization.load_pem_public_key(
                 key_file.read(), backend=default_backend()
