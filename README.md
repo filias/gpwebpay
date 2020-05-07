@@ -32,7 +32,7 @@ GPWEBPAY_PRIVATE_KEY_NAME = ""       # The path to the private key file
 GPWEBPAY_PUBLIC_KEY_NAME = ""        # The path to the public key file
 
 # Optional:
-GPWEBPAY_CURRENCY = "978"       # If not set EURO is the default currency
+GPWEBPAY_CURRENCY = "978"       # If not set EUR is the default currency
 GPWEBPAY_DEPOSIT_FLAG = "1"     # Requests instant payment
 GPWEBPAY_PASSPHRASE = ""        # If any
 ```
