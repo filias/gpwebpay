@@ -7,8 +7,8 @@ GPWebPay Gateway access with python
 To run the tests:
 `pytest
 
-## Configuration (WIP)
-To use this module define your own environmental variables listed below with an example:
+## Configuration
+To use this module create a PaymentGateway:
 
 ```python
 import gpwebpay
@@ -16,7 +16,7 @@ import gpwebpay
 gw = gpwebpay.PaymentGateway()
 ```
 
-Then you can call the available methods from GPWebPay's API:
+and then call its available methods:
 
 ```python
 gw.request_payment()
@@ -24,7 +24,7 @@ gw.check_status()
 
 ```
 
-Environmental variables needed.
+Environmental variables needed:
 ```
 GPWEBPAY_MERCHANT_ID = "0987654321"  # Your merchant's id from gpwebpay
 GPWEBPAY_RESPONSE_URL = ""           # The url for the callback
