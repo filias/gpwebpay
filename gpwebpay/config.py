@@ -9,7 +9,7 @@ class Config:
     GPWEBPAY_PRIVATE_KEY_NAME = os.getenv(
         "GPWEBPAY_PRIVATE_KEY_NAME", "gpwebpay-pvk.key"
     )
-    GPWEBPAY_PASSPHRASE = os.getenv("GPWEBPAY_PASSPHRASE", "PyLadies2020")
+    GPWEBPAY_PASSPHRASE = os.getenv("GPWEBPAY_PASSPHRASE", "PyLadies2019")
     GPWEBPAY_PUBLIC_KEY_NAME = os.getenv(
         "GPWEBPAY_PUBLIC_KEY_NAME", "gpe.signing_test.pem"
     )

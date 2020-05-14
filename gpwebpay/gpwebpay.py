@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PaymentGateway:
-    data = OrderedDict()
+    data = OrderedDict()  # Parameters need to be in the right order
     payment = None
 
     def _prefill_card_data(self):
@@ -39,7 +39,7 @@ class PaymentGateway:
         self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
         self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
         self.data["URL"] = configuration.GPWEBPAY_RESPONSE_URL
-        self.data["PAYMETHOD"] = "CRD"  # Just card payments for now
+        #self.data["PAYMETHOD"] = "CRD"  # Just card payments for now
         # if self.payment.payment_method == 'MPS':
         #    self._make_add_info()
 
@@ -48,9 +48,9 @@ class PaymentGateway:
         digest_bytes = "|".join(self.data.values()).encode("utf-8")
         # Sign the data according to GPWebPay documentation (9.1.3)
         # a) - apply SHA1 algorithm on the digest
-        # digest = hashes.Hash(hashes.SHA1(), backend=default_backend())
-        # digest.update(digest_bytes)
-        # digest.finalize()
+        digest = hashes.Hash(hashes.SHA1(), backend=default_backend())
+        digest.update(digest_bytes)
+        digest.finalize()
 
         # b) - apply EMSA-PKCS1-v1_5-ENCODE
         pk_file = os.path.join(os.getcwd(), configuration.GPWEBPAY_PRIVATE_KEY_NAME)
@@ -88,6 +88,7 @@ class PaymentGateway:
         headers = {
             "accept-charset": "UTF-8",
             "accept-encoding": "UTF-8",
+            "Content-Type": "application/x-www-form-urlencoded",
         }
         response = requests.post(
             configuration.GPWEBPAY_TEST_URL, data=self.data, headers=headers
