@@ -5,7 +5,9 @@ GPWebPay Gateway access with python
 ## How to run the tests
 
 To run the tests:
-`pytest
+```bash
+ pytest
+ ```
 
 ## Configuration
 To use this module create a PaymentGateway:
@@ -19,8 +21,8 @@ gw = gpwebpay.PaymentGateway()
 and then call its available methods:
 
 ```python
-gw.request_payment()
-gw.check_status()
+gw.request_payment(order_numer="123456")
+gw.check_status(order_numer="123456")
 
 ```
 
