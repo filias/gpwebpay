@@ -19,7 +19,7 @@ class PaymentGateway:
     data = OrderedDict()  # Parameters need to be in the right order
     payment = None
 
-    def _create_data(self, order_number):
+    def _create_data(self, order_number=""):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
         self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
@@ -55,8 +55,8 @@ class PaymentGateway:
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
-    def request_payment(self, order_number):
-        self._create_data(order_number)
+    def request_payment(self, order_number=""):
+        self._create_data(order_number=order_number)
         self._sign_data()
 
         # Send the request
