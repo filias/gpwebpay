@@ -20,7 +20,7 @@ def test_init():
 def test_connection():
     gw = PaymentGateway()
     responses.add(responses.POST, configuration.GPWEBPAY_TEST_URL, status=200)
-    response = gw.request_payment()
+    response = gw.request_payment("123456")
     assert response.status_code == 200
 
 
@@ -33,7 +33,7 @@ def test_sign_data():
                       "+ViYIArfnfZylBa6oUvhSAw4l3w=="
 
     gw = PaymentGateway()
-    gw._create_data()
+    gw._create_data("123456")
     gw._sign_data()
-    assert gw.data["DIGEST"] == expected_digest
 
+    assert gw.data["DIGEST"] == expected_digest.encode()

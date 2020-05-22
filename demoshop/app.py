@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, request
 
 from gpwebpay.gpwebpay import PaymentGateway
 
@@ -15,7 +15,12 @@ def index():
 def request_payment():
     gw = PaymentGateway()
     response = gw.request_payment()
-    return response.content.decode()
+    return redirect(response.url)
+
+
+@app.route('/payment_callback')
+def payment_callback():
+    return "Your order is paid!"
 
 
 if __name__ == '__main__':

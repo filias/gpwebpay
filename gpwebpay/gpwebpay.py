@@ -19,40 +19,25 @@ class PaymentGateway:
     data = OrderedDict()  # Parameters need to be in the right order
     payment = None
 
-    def _prefill_card_data(self):
-        """For prefilling the card used in a previous successful payment"""
-        # How to do it?
-        # 1. Get the last payment data from your db
-        # 2. Fill up the 'FASTPAYID' parameter with the unique ORDERNUMBER
-        pass
-
-    def _make_add_info(self):
-        pass
-
-    def _create_data(self):
+    def _create_data(self, order_number):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
         self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
         self.data["OPERATION"] = "CREATE_ORDER"
-        self.data["ORDERNUMBER"] = "123456"  # Dummy for now
+        self.data["ORDERNUMBER"] = order_number
         self.data["AMOUNT"] = "10"  # Fixed for now
         self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
         self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
         self.data["URL"] = configuration.GPWEBPAY_RESPONSE_URL
-        #self.data["PAYMETHOD"] = "CRD"  # Just card payments for now
-        # if self.payment.payment_method == 'MPS':
-        #    self._make_add_info()
 
     def _sign_data(self):
-        # Create DIGEST according to GPWebPay documentation (9.1.1)
-        digest_bytes = "|".join(self.data.values()).encode("utf-8")
-        # Sign the data according to GPWebPay documentation (9.1.3)
-        # a) - apply SHA1 algorithm on the digest
-        digest = hashes.Hash(hashes.SHA1(), backend=default_backend())
-        digest.update(digest_bytes)
-        digest.finalize()
+        # Create message according to GPWebPay documentation (4.1.1)
+        message = "|".join(self.data.values())
+        message_bytes = message.encode("utf-8")
 
-        # b) - apply EMSA-PKCS1-v1_5-ENCODE
+        # Sign the message according to GPWebPay documentation (4.1.3)
+        # b) Apply EMSA-PKCS1-v1_5-ENCODE
+        # TODO: fix this path (also for public key)
         pk_file = os.path.join(os.getcwd(), configuration.GPWEBPAY_PRIVATE_KEY_NAME)
         with open(pk_file, "rb") as key_file:
             private_key = serialization.load_pem_private_key(
@@ -61,27 +46,17 @@ class PaymentGateway:
                 backend=default_backend(),
             )
 
-        # c) - apply RSASSA-PKCS1-V1_5-SIGN
-        signature = private_key.sign(
-            digest_bytes,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA1(),
-        )
+        # c) Apply RSASSA-PKCS1-V1_5-SIGN and a) Apply SHA1 algorithm on the digest
+        signature = private_key.sign(message_bytes, padding.PKCS1v15(), hashes.SHA1())
 
-        # d) - encode c) with BASE64
+        # d) Encode c) with BASE64
         digest = base64.b64encode(signature)
 
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
-    def _create_payment(self, user, product, payment_method):
-        """Put here the code to create a Payment in your db"""
-        pass
-
-    def request_payment(self):
-        self._create_data()
+    def request_payment(self, order_number):
+        self._create_data(order_number)
         self._sign_data()
 
         # Send the request
@@ -148,9 +123,6 @@ class PaymentCallback:
         except InvalidSignature:
             return False
 
-    def _update_payment(self):
-        pass
-
     def callback(self, request):
         # Make DIGEST based on the request params
         digest = self._create_data(request)
@@ -164,7 +136,3 @@ class PaymentCallback:
         else:
             # The message received was corrupted - bad signature
             return "Data not verified."
-
-
-class GPWebPaySetupException(Exception):
-    pass
