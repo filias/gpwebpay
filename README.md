@@ -1,6 +1,6 @@
 # gpwebpay
 
-GPWebPay Gateway access with python
+GPWebPay Gateway access with python.
 
 ## How to run the tests
 
@@ -10,18 +10,19 @@ To run the tests:
  ```
 
 ## Configuration
-To use this module create a PaymentGateway:
+To use this package create a PaymentGateway:
 
 ```python
-import gpwebpay
+from gpwebpay import gpwebpay
 
 gw = gpwebpay.PaymentGateway()
-```
 
-and then call its available methods:
+# Call this method to request a payment to GPWebPay.
+# Returns a response, redirect to response.url to go to GPWebPay's and make the payment
+# order_number needs to be unique.
+gw.request_payment(order_numer="123456")  
 
-```python
-gw.request_payment(order_numer="123456")
+# Call this method to check the status of a payment
 gw.check_status(order_numer="123456")
 
 ```
@@ -42,3 +43,20 @@ GPWEBPAY_PASSPHRASE = ""        # If any
 For more details refer to the GPWebPay documentation in > http://www.gpwebpay.cz/en/Download
 
 
+## Demo shop
+There is a demoshop folder which demonstrates the usage of this package in your webshop.
+It is a flask app.
+
+To run it locally:
+```bash
+python demoshop/app.py
+```
+
+
+# Development
+We use poetry to manage dependencies, packaging and publishing.
+If you want to develop locally install poetry and run:
+
+```bash
+poetry install
+```

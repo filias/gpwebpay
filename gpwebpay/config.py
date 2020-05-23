@@ -6,6 +6,9 @@ class Config:
     GPWEBPAY_CURRENCY = os.getenv("GPWEBPAY_CURRENCY", "978")  # EUR
     GPWEBPAY_DEPOSIT_FLAG = os.getenv("GPWEBPAY_DEPOSIT_FLAG", "1")
     GPWEBPAY_RESPONSE_URL = os.getenv("GPWEBPAY_RESPONSE_URL", "https://www.vinte.sk/")
+    GPWEBPAY_RESPONSE_URL = os.getenv(
+        "GPWEBPAY_RESPONSE_URL", "https://localhost:5000/payment_callback"
+    )
     GPWEBPAY_PRIVATE_KEY_NAME = os.getenv(
         "GPWEBPAY_PRIVATE_KEY_NAME", "gpwebpay-pvk.key"
     )

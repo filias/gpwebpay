@@ -1,6 +1,9 @@
+import random
+import string
+
 from flask import Flask, redirect, request
 
-from gpwebpay.gpwebpay import PaymentGateway
+from gpwebpay import gpwebpay
 
 
 app = Flask(__name__)
@@ -13,8 +16,11 @@ def index():
 
 @app.route("/pay")
 def request_payment():
-    gw = PaymentGateway()
-    response = gw.request_payment()
+    order_number = "".join(random.choices(string.digits, k=6))
+
+    gw = gpwebpay.PaymentGateway()
+    response = gw.request_payment(order_number=order_number)
+
     return redirect(response.url)
 
 
@@ -24,4 +30,4 @@ def payment_callback():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(ssl_context="adhoc")  # To use https
