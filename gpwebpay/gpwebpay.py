@@ -19,22 +19,23 @@ class PaymentGateway:
     data = OrderedDict()  # Parameters need to be in the right order
     payment = None
 
-    def _create_data(self, order_number=""):
+    def _create_data(self, order_number="", amount=0):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
         self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
         self.data["OPERATION"] = "CREATE_ORDER"
         self.data["ORDERNUMBER"] = order_number
-        self.data["AMOUNT"] = "10"  # Fixed for now
+        self.data["AMOUNT"] = str(amount)
         self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
         self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
         self.data["URL"] = configuration.GPWEBPAY_RESPONSE_URL
 
-    def _sign_data(self):
+    def _create_message(self):
         # Create message according to GPWebPay documentation (4.1.1)
         message = "|".join(self.data.values())
-        message_bytes = message.encode("utf-8")
+        return message.encode("utf-8")
 
+    def _sign_data(self, message_bytes):
         # Sign the message according to GPWebPay documentation (4.1.3)
         # b) Apply EMSA-PKCS1-v1_5-ENCODE
         # TODO: fix this path (also for public key)
@@ -55,9 +56,10 @@ class PaymentGateway:
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
-    def request_payment(self, order_number=""):
-        self._create_data(order_number=order_number)
-        self._sign_data()
+    def request_payment(self, order_number="", amount=0):
+        self._create_data(order_number=order_number, amount=amount)
+        message = self._create_message()
+        self._sign_data(message)
 
         # Send the request
         headers = {

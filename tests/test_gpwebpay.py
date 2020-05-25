@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import responses
 
 from gpwebpay.gpwebpay import PaymentGateway
@@ -9,7 +11,8 @@ from gpwebpay.config import configuration
 # Expiry date: 12/2020
 # CVC2: 200
 
-# message = "8888880035|CREATE_ORDER|123456|10|978|1|https://www.vinte.sk/"
+# Example message = "<GPWEBPAY_MERCHANT_ID>|CREATE_ORDER|<order_number>|<amount>|
+# <GPWEBPAY_CURRENCY>|<GPWEBPAY_DEPOSIT_FLAG>|<GPWEBPAY_RESPONSE_URL>"
 
 
 def test_init():
@@ -21,21 +24,56 @@ def test_init():
 def test_connection():
     gw = PaymentGateway()
     responses.add(responses.POST, configuration.GPWEBPAY_TEST_URL, status=200)
-    response = gw.request_payment(order_number="123456")
+    response = gw.request_payment(order_number="123456", amount=10)
     assert response.status_code == 200
 
 
-def test_sign_data():
-    expected_digest = (
-        "JwJUYtV/Z8SpGIk6r0gzk7ioKcOhERfOR4+bhUBxC8BwbH9wxuf9ct6cHMpXDqIbCrgk5nhIqdQ8tP"
-        "WGbDCiDSeaDAMQyB9G/HcWk5N6r4tLmife3wzw0CSJ1mdRhYA0gyRTMwHRIiUIodbX/0dFh9rJgB+S"
-        "z91nnMV5KA07YNyGvIFpBsi91w6FideB36EweQY2dq3MPXr6yMmj5Dzlvus4DBNY8VfnKZvFUoNvux"
-        "j78r9WDeowSvQwQVrcznKx2gHyb9XI5cGyISzL5tcHIFeLENi4+NPuHNQYk+m+W9QeabSjpu1w+nTG"
-        "Xui+ViYIArfnfZylBa6oUvhSAw4l3w=="
-    )
+def test_create_data(monkeypatch):
+    monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
+    expected_data = OrderedDict(
+        MERCHANTNUMBER="1234567890",
+        OPERATION="CREATE_ORDER",
+        ORDERNUMBER="123456",
+        AMOUNT="10",
+        CURRENCY="978",
+        DEPOSITFLAG="1",
+        URL="https://localhost:5000/payment_callback",
+    )
     gw = PaymentGateway()
-    gw._create_data(order_number="123456")
-    gw._sign_data()
+    gw._create_data(order_number="123456", amount=10)
+    assert gw.data == expected_data
+
+
+def test_create_message(monkeypatch):
+    monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
+
+    expected_message = (
+        b"1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/"
+        b"payment_callback"
+    )
+    gw = PaymentGateway()
+    gw._create_data(order_number="123456", amount=10)
+    message = gw._create_message()
+    assert message == expected_message
+
+
+def test_sign_data(monkeypatch):
+    monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
+
+    # Created with java -jar digestProc.jar -s
+    # "1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/payment_callback"
+    expected_digest = (
+        "DWarvfXJP5CFFvn8zNEtImumad7Cmj/M5qQrbcFd66bjhFR4NxkEj4WSR4sCG/6YBWQAgJ3H/n7XPC"
+        "RnTu670GaivWQ0dg7DevzyZKcCJwFs4olcA2mb4vfM0yAFW0jkqD3G3eCpHylWogxCVCXrMso8WIpc"
+        "5nliwq1Sp/53Q3weXAYXIwvgOe/qtVqhdeOa+r5RNaYcgKzAWafSf9bAfweoedq1yMGfXRPTyLIQfw"
+        "Ahsk8DTN9ybohw4mQeZ2/LFcJklMdUuLKqJ/5MLwyV9/0jmxf2bZvymr4aj3S/wpLCJnZV5HDXqYXa"
+        "VPokOwvnvGXwSMNw45h1zIwIXpQhig=="
+    )
+    gw = PaymentGateway()
+    gw._create_data(order_number="123456", amount=10)
+    message = gw._create_message()
+    print(gw.data, message)
+    gw._sign_data(message)
 
     assert gw.data["DIGEST"] == expected_digest.encode()
