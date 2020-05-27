@@ -1,5 +1,8 @@
 import os
 
+from dotenv import load_dotenv
+load_dotenv()  # Automaticaly loads the .env file
+
 
 class Config:
     GPWEBPAY_MERCHANT_ID = os.getenv("GPWEBPAY_MERCHANT_ID", "")
@@ -8,9 +11,10 @@ class Config:
     GPWEBPAY_RESPONSE_URL = os.getenv(
         "GPWEBPAY_RESPONSE_URL", "https://localhost:5000/payment_callback"
     )
-    GPWEBPAY_PRIVATE_KEY_NAME = os.getenv(
-        "GPWEBPAY_PRIVATE_KEY_NAME", "gpwebpay-pvk.key"
-    )
+    # GPWEBPAY_PRIVATE_KEY_NAME = os.getenv(
+    #     "GPWEBPAY_PRIVATE_KEY_NAME", "gpwebpay-pvk.key"
+    # )
+    GPWEBPAY_PRIVATE_KEY = os.getenv("GPWEBPAY_PRIVATE_KEY", "")
     GPWEBPAY_PASSPHRASE = os.getenv("GPWEBPAY_PASSPHRASE", "")
     GPWEBPAY_PUBLIC_KEY_NAME = os.getenv(
         "GPWEBPAY_PUBLIC_KEY_NAME", "gpe.signing_test.pem"

@@ -1,3 +1,4 @@
+import base64
 from collections import OrderedDict
 
 import responses
@@ -24,7 +25,8 @@ def test_init():
 def test_connection():
     gw = PaymentGateway()
     responses.add(responses.POST, configuration.GPWEBPAY_TEST_URL, status=200)
-    response = gw.request_payment(order_number="123456", amount=10)
+    key_bytes = base64.b64decode(configuration.GPWEBPAY_PRIVATE_KEY)
+    response = gw.request_payment(order_number="123456", amount=10, key_bytes=key_bytes)
     assert response.status_code == 200
 
 
@@ -73,7 +75,7 @@ def test_sign_data(monkeypatch):
     gw = PaymentGateway()
     gw._create_data(order_number="123456", amount=10)
     message = gw._create_message()
-    print(gw.data, message)
-    gw._sign_data(message)
+    key_bytes = base64.b64decode(configuration.GPWEBPAY_PRIVATE_KEY)
+    gw._sign_data(message, key_bytes=key_bytes)
 
     assert gw.data["DIGEST"] == expected_digest.encode()

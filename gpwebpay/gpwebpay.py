@@ -35,17 +35,14 @@ class PaymentGateway:
         message = "|".join(self.data.values())
         return message.encode("utf-8")
 
-    def _sign_data(self, message_bytes):
+    def _sign_data(self, message_bytes, key_bytes):
         # Sign the message according to GPWebPay documentation (4.1.3)
         # b) Apply EMSA-PKCS1-v1_5-ENCODE
-        # TODO: fix this path (also for public key)
-        pk_file = os.path.join(os.getcwd(), configuration.GPWEBPAY_PRIVATE_KEY_NAME)
-        with open(pk_file, "rb") as key_file:
-            private_key = serialization.load_pem_private_key(
-                key_file.read(),
-                password=configuration.GPWEBPAY_PASSPHRASE.encode("UTF-8"),
-                backend=default_backend(),
-            )
+        private_key = serialization.load_pem_private_key(
+            key_bytes,
+            password=configuration.GPWEBPAY_PASSPHRASE.encode("UTF-8"),
+            backend=default_backend(),
+        )
 
         # c) Apply RSASSA-PKCS1-V1_5-SIGN and a) Apply SHA1 algorithm on the digest
         signature = private_key.sign(message_bytes, padding.PKCS1v15(), hashes.SHA1())
@@ -56,10 +53,10 @@ class PaymentGateway:
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
-    def request_payment(self, order_number="", amount=0):
+    def request_payment(self, order_number=None, amount=0, key_bytes=None):
         self._create_data(order_number=order_number, amount=amount)
         message = self._create_message()
-        self._sign_data(message)
+        self._sign_data(message, key_bytes=key_bytes)
 
         # Send the request
         headers = {
