@@ -75,9 +75,7 @@ def test_sign_data(monkeypatch):
     gw = PaymentGateway()
     gw._create_data(order_number="123456", amount=10)
     message = gw._create_message()
-    print(configuration.GPWEBPAY_PRIVATE_KEY)
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PRIVATE_KEY)
-    print(key_bytes)
     gw._sign_data(message, key_bytes=key_bytes)
 
     assert gw.data["DIGEST"] == expected_digest.encode()
