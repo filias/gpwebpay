@@ -1,8 +1,8 @@
 import base64
 import logging
-import os
 import requests
 from collections import OrderedDict
+from requests.models import Response
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
@@ -16,10 +16,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PaymentGateway:
-    data = OrderedDict()  # Parameters need to be in the right order
-    payment = None
-
-    def _create_data(self, order_number="", amount=0):
+    def _create_payment_data(self, order_number="", amount=0):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
         self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
@@ -30,12 +27,12 @@ class PaymentGateway:
         self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
         self.data["URL"] = configuration.GPWEBPAY_RESPONSE_URL
 
-    def _create_message(self):
+    def _create_message(self, data):
         # Create message according to GPWebPay documentation (4.1.1)
-        message = "|".join(self.data.values())
+        message = "|".join(data.values())
         return message.encode("utf-8")
 
-    def _sign_data(self, message_bytes, key_bytes):
+    def _sign_message(self, message_bytes, key_bytes):
         # Sign the message according to GPWebPay documentation (4.1.3)
         # b) Apply EMSA-PKCS1-v1_5-ENCODE
         private_key = serialization.load_pem_private_key(
@@ -53,12 +50,43 @@ class PaymentGateway:
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
+    def _create_callback_data(self, request):
+        data = OrderedDict()
+        for key, value in request.params.items():
+            data[key] = value
+        return data
+
+    def _is_valid(self, request, key_bytes):
+        """Verify the validity of the response from GPWebPay"""
+        data = self._create_callback_data(request)
+        digest = data.pop("DIGEST")  # Remove the DIGEST
+        message = self._create_message(data)
+
+        # Decode the DIGEST using base64
+        signature = base64.b64decode(digest)
+
+        # Load the public key
+        key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
+        public_key = serialization.load_pem_public_key(
+            key_bytes,
+            backend=default_backend(),
+        )
+
+        # Verify the message
+        try:
+            public_key.verify(signature, message, padding.PKCS1v15(), hashes.SHA1())
+            return True
+        except InvalidSignature:
+            return False
+
     def request_payment(self, order_number=None, amount=0, key_bytes=None):
-        self._create_data(order_number=order_number, amount=amount)
-        message = self._create_message()
-        self._sign_data(message, key_bytes=key_bytes)
+        breakpoint()
+        self._create_payment_data(order_number=order_number, amount=amount)
+        message = self._create_message(self.data)
+        self._sign_message(message, key_bytes=key_bytes)
 
         # Send the request
+        # TODO: check if we need all these headers
         headers = {
             "accept-charset": "UTF-8",
             "accept-encoding": "UTF-8",
@@ -67,71 +95,15 @@ class PaymentGateway:
         response = requests.post(
             configuration.GPWEBPAY_TEST_URL, data=self.data, headers=headers
         )
+
         return response
 
-
-class PaymentCallback:
-    data = OrderedDict()
-    payment = None
-
-    def _create_data(self, request):
-        # To create the DIGEST we need to keep the order of the params
-        self.data = OrderedDict()
-        self.data["OPERATION"] = "CREATE_ORDER"
-        for key in (
-            "ORDERNUMBER",
-            "MERORDERNUM",
-            "MD",
-            "PRCODE",
-            "SRCODE",
-            "RESULTTEXT",
-            "USERPARAM1",
-            "ADDINFO",
-        ):
-            value = request.GET.get(key)
-            # Only use existing params
-            if value:
-                self.data[key] = value
-        digest = "|".join(self.data.values()).encode("utf-8")
-        return digest
-
-    def _is_data_verified(self, request, digest):
-        # Decode the DIGEST using base64
-        signature = request.GET.get("DIGEST")
-        signature = base64.b64decode(signature)
-
-        # Initialize RSA key
-        pubk_file = os.path.join(os.getcwd(), configuration.GPWEBPAY_PUBLIC_KEY_NAME)
-        with open(pubk_file, "rb") as key_file:
-            public_key = serialization.load_pem_public_key(
-                key_file.read(), backend=default_backend()
-            )
-
-        # Verify the message
-        try:
-            public_key.verify(
-                signature,
-                digest,
-                padding.PSS(
-                    mgf=padding.MGF1(hashes.SHA256()),
-                    salt_length=padding.PSS.MAX_LENGTH,
-                ),
-                hashes.SHA1(),
-            )
-            return True
-        except InvalidSignature:
-            return False
-
-    def callback(self, request):
-        # Make DIGEST based on the request params
-        digest = self._create_data(request)
-
-        # Verify the data authenticity
-        data_is_verified = self._is_data_verified(request, digest)
-
-        if data_is_verified:
-            # Update the payment
-            pass
+    def verify_payment(self, request, key_bytes):
+        breakpoint()
+        if self._is_valid(request, key_bytes):
+            # TODO: check what we need to return
+            return "Verified"
         else:
-            # The message received was corrupted - bad signature
-            return "Data not verified."
+            error_response = Response()
+            error_response.status_code = 401
+            return error_response

@@ -13,9 +13,7 @@ class Config:
     )
     GPWEBPAY_PRIVATE_KEY = os.getenv("GPWEBPAY_PRIVATE_KEY", "")
     GPWEBPAY_PASSPHRASE = os.getenv("GPWEBPAY_PASSPHRASE", "")
-    GPWEBPAY_PUBLIC_KEY_NAME = os.getenv(
-        "GPWEBPAY_PUBLIC_KEY_NAME", "gpe.signing_test.pem"
-    )
+    GPWEBPAY_PUBLIC_KEY = os.getenv("GPWEBPAY_PUBLIC_KEY", "")
     GPWEBPAY_TEST_URL = "https://test.3dsecure.gpwebpay.com/pgw/order.do"
 
 
