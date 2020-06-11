@@ -36,4 +36,4 @@ jobs:
         GPWEBPAY_PRIVATE_KEY: ${{ secrets.GPWEBPAY_PRIVATE_KEY }}
         GPWEBPAY_PASSPHRASE: ${{ secrets.GPWEBPAY_PASSPHRASE }}
       run: |
-        pytest
+        pytest --cov=gpwebpay tests/
