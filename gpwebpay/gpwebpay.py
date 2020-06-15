@@ -8,6 +8,7 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography import x509
 
 from .config import configuration
 
@@ -60,17 +61,18 @@ class PaymentGateway:
         """Verify the validity of the response from GPWebPay"""
         data = self._create_callback_data(request)
         digest = data.pop("DIGEST")  # Remove the DIGEST
+        digest1 = data.pop("DIGEST1")  # Remove the DIGEST1
+        # TODO: check with DIGEST1
         message = self._create_message(data)
 
         # Decode the DIGEST using base64
         signature = base64.b64decode(digest)
 
         # Load the public key
-        key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
-        public_key = serialization.load_pem_public_key(
+        public_key = x509.load_pem_x509_certificate(
             key_bytes,
             backend=default_backend(),
-        )
+        ).public_key()
 
         # Verify the message
         try:
@@ -80,7 +82,6 @@ class PaymentGateway:
             return False
 
     def request_payment(self, order_number=None, amount=0, key_bytes=None):
-        breakpoint()
         self._create_payment_data(order_number=order_number, amount=amount)
         message = self._create_message(self.data)
         self._sign_message(message, key_bytes=key_bytes)
@@ -99,7 +100,6 @@ class PaymentGateway:
         return response
 
     def verify_payment(self, request, key_bytes):
-        breakpoint()
         if self._is_valid(request, key_bytes):
             # TODO: check what we need to return
             return "Verified"

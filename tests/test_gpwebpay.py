@@ -90,9 +90,21 @@ def test_verify_data():
         PRCODE="0",
         SRCODE="0",
         RESULTTEXT="OK",
-        DIGEST="YgPdjK7zKtur9LQBNRsk5Rr8ue0U1MxP1tl3NJ2K%2FvSf1MhBzhKv74ho43pi44BAHgyxuhkV5UrW9waE2Bp7l095vrNOwTGvJSb6usY2grzOkdqL7EZOJ9bDqpltggiTGADU8CdXlAzu1TCR2rs7Ufp%2FEz3rEQlSOCTtWTtVLmK8ipqq%2FU7g%2F20miNWXZGV9pGWDo6V5diFXJG7EadcUMmKBzGe5%2B3UTFc2oO2WVcfgalIHKVfEwV7%2FKTEE1dRhD8Goj29JbHZx0xCRd8yRnMrd8DW%2F4BGdjhF6EhpzjOuViiNjVptcl7npTFo0aV6t%2Bpw%2BhP9bn8i0JN4%2BczhRtzw%3D%3D&DIGEST1=OEiZFAFZ4AjeTSHF%2BI1eDodgTObVsB1xSqfziZOfYUj5nqL35n5XH6QQ1WphCPBjBUo8te8IvkkaMoouJoDgWJcUbu1%2BUQQfbMD2M032o8shpiL%2FE%2B8YGr4s81RMqVwdfL516dEVJJvv67uGOdo5wH5mgWzN5ZF7Aito3e7kgcOBkPlHyJq9QqvNJhXg4Bd3cueVQvICbe1FUyWED4PgaDY0eHLC7rL5vG80O%2BZtFj7nYg1zZAzpWG%2FLS7z5HTaHk835pi1OMToWnhK4V60yEdQuuoO6OFTzB3Qefy3%2B5k%2Fc9N6GNx7pXGUhCdhGkD%2FhA77QtUZww8IDlLrik4JYmw%3D%3D",
+        DIGEST="YgPdjK7zKtur9LQBNRsk5Rr8ue0U1MxP1tl3NJ2K/vSf1MhBzhKv74ho43pi44BAHgyxuhk"
+               "V5UrW9waE2Bp7l095vrNOwTGvJSb6usY2grzOkdqL7EZOJ9bDqpltggiTGADU8CdXlAzu1T"
+               "CR2rs7Ufp/Ez3rEQlSOCTtWTtVLmK8ipqq/U7g/20miNWXZGV9pGWDo6V5diFXJG7EadcUM"
+               "mKBzGe5+3UTFc2oO2WVcfgalIHKVfEwV7/KTEE1dRhD8Goj29JbHZx0xCRd8yRnMrd8DW/4"
+               "BGdjhF6EhpzjOuViiNjVptcl7npTFo0aV6t+pw+hP9bn8i0JN4+czhRtzw==",
+        DIGEST1="OEiZFAFZ4AjeTSHF+I1eDodgTObVsB1xSqfziZOfYUj5nqL35n5XH6QQ1WphCPBjBUo8te"
+                "8IvkkaMoouJoDgWJcUbu1+UQQfbMD2M032o8shpiL/E+8YGr4s81RMqVwdfL516dEVJJvv"
+                "67uGOdo5wH5mgWzN5ZF7Aito3e7kgcOBkPlHyJq9QqvNJhXg4Bd3cueVQvICbe1FUyWED4"
+                "PgaDY0eHLC7rL5vG80O+ZtFj7nYg1zZAzpWG/LS7z5HTaHk835pi1OMToWnhK4V60yEdQu"
+                "uoO6OFTzB3Qefy3+5k/c9N6GNx7pXGUhCdhGkD/hA77QtUZww8IDlLrik4JYmw==",
     )
     gw = PaymentGateway()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
     request = requests.Request(method="GET", url=url, params=params)
     gw.verify_payment(request, key_bytes)
+
+
+
