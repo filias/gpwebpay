@@ -35,5 +35,6 @@ jobs:
       env:
         GPWEBPAY_PRIVATE_KEY: ${{ secrets.GPWEBPAY_PRIVATE_KEY }}
         GPWEBPAY_PASSPHRASE: ${{ secrets.GPWEBPAY_PASSPHRASE }}
+        GPWEBPAY_PUBLIC_KEY: ${{ secrets.GPWEBPAY_PUBLIC_KEY }}
       run: |
         pytest
