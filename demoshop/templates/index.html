@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="wrapper">
+    <header class="header">
+        <a class="logo">
+            <img src="{{ url_for('static', filename='img/beet-logo.png' )}}" alt="logo" class="logo__image">
+            DemoShop
+        </a>
+        <div class="header__menu">
+            <button class="shopping-cart">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            </button>
+            <div>Total:<span id="total">0</span></div>
+            <a href="{{url_for('request_payment')}}" class="btn">Checkout</a>
+        </div>
+        <!-- #TODO shopping list cart  -->
+        <div class="shopping-list hide">
+            <div class="shopping-list__wrapper">
+                <div id="">Total:<span>0</span></div>
+                <a class="btn">Checkout</a>
+            </div>
+        </div>
+    </header>
+    <div class="title-section">
+    </div>
+    <div class="container">
+        <h4>Our Offers</h4>
+        <ul class="products">
+            {% for product in products %}
+            <li>
+                <img src="{{url_for('static', filename='img/products/' + product.image)}}" alt="">
+                <div> {{ product.title }}</div>
+
+                <div class="products__info">
+                    <span> {{ product.price }} </span>
+                    <button id="{{product.id}}" class="products__btn" data-price="{{product.price}}"> <i
+                            class="fa fa-cart-plus" aria-hidden="true"></i></button>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock content %}
