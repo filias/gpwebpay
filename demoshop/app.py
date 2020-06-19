@@ -49,17 +49,20 @@ def index():
 @app.route("/pay")
 def request_payment():
     order_number = "".join(random.choices(string.digits, k=6))
+    amount = request.values.get("amount")
 
     gw = gpwebpay.PaymentGateway()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PRIVATE_KEY)
     response = gw.request_payment(
-        order_number=order_number, amount=10, key_bytes=key_bytes
+        order_number=order_number, amount=amount, key_bytes=key_bytes
     )
     return redirect(response.url)
 
 
 @app.route("/payment_callback")
 def payment_callback():
+    # TODO: call verify_payment
+    # verify_payment(self, request, key_bytes)
     return "Your order is paid!"
 
 
