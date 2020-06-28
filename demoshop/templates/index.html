@@ -13,7 +13,7 @@
             {% for product in products %}
             <li>
                 <img src="{{url_for('static', filename='img/products/' + product.image)}}" alt="">
-                <div>{{ loop.index }}/{{ loop.length }} {{ product.title }}</div>
+                <div>{{ product.title }}</div>
 
                 <div class="products__info">
                     <span> {{ product.price }} </span>
