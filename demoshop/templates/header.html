@@ -4,17 +4,28 @@
         DemoShop
     </a>
     <div class="header__menu">
-        <button class="shopping-cart">
+        <button class="shopping-cart" onclick="openShoppingList()">
             <i class="fa fa-shopping-cart" aria-hidden="true"></i>
         </button>
         <div>Total:<span id="total">0</span></div>
         <button href="" class="btn" onclick="proceed_payment()">Checkout</button>
     </div>
     {# TODO shopping list cart #}
-    <div class="shopping-list hide">
+    <div id="shopping-list-sidebar" class="sidebar shopping-list">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeShoppingList()">×</a>
         <div class="shopping-list__wrapper">
-            <div id="">Total:<span>0</span></div>
-            <a class="btn">Checkout</a>
+            <div class="shoppint-list__title">Shopping Cart</div>
+            <!-- {% for item in session["cart"] %} -->
+            <div class="shopping-list__item">
+                Here is the product
+            </div>
+            <!-- {% endfor %} -->
+            <div class="shopping-list__total">Total:
+                <span id="total">€ here is the total</span>
+            </div>
+            <button href="" class="btn btn-checkout" onclick="proceed_payment()">Checkout</button>
+            {# TODO clean local storage #}
+            <button class="btn btn-remove">Remove items</button>
         </div>
     </div>
 </header>

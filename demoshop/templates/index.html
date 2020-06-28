@@ -12,12 +12,12 @@
         <ul class="products">
             {% for product in products %}
             <li>
-                <img src="{{url_for('static', filename='img/products/' + product.image)}}" alt="">
+                <img src="{{ url_for('static', filename='img/products/' + product.image) }}" alt="">
                 <div>{{ product.title }}</div>
 
                 <div class="products__info">
                     <span> {{ product.price }} </span>
-                    <button id="{{product.id}}" class="products__btn" data-price="{{product.price}}"> <i
+                    <button id="{{ product.id }}" class="products__btn" data-price="{{ product.price }}"> <i
                             class="fa fa-cart-plus" aria-hidden="true"></i></button>
                 </div>
             </li>

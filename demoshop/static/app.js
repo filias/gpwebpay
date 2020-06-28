@@ -68,3 +68,10 @@ const proceed_payment = () => {
       console.log("Fetch error: " + error);
     });
 };
+const openShoppingList = () => {
+  document.getElementById("shopping-list-sidebar").style.width = "250px";
+};
+
+const closeShoppingList = () => {
+  document.getElementById("shopping-list-sidebar").style.width = "0";
+};
