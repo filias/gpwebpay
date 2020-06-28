@@ -41,3 +41,34 @@
     totalContainer.innerText = total;
   };
 })();
+
+const proceed_payment = () => {
+  let finalAmount = document.getElementById("total").innerText;
+
+  let amountObject = {
+    amount: finalAmount,
+  };
+
+  fetch(`${window.origin}/pay`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(amountObject),
+    cache: "no-cache",
+    // mode: "no-cors",
+    headers: new Headers({
+      "content-type": "application/json",
+    }),
+  })
+    .then(function (response) {
+      if (response.status !== 200) {
+        console.log(`There is an error! Status code: ${response.status}`);
+        return;
+      }
+      response.json().then(function (data) {
+        console.log(data);
+      });
+    })
+    .catch(function (error) {
+      console.log("Fetch error: " + error);
+    });
+};

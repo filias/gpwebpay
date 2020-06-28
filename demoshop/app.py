@@ -2,7 +2,7 @@ import base64
 import random
 import string
 
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, request, render_template, jsonify, make_response
 
 from gpwebpay import gpwebpay
 from gpwebpay.config import configuration
@@ -46,16 +46,21 @@ def index():
     return render_template("index.html", products=products)
 
 
-@app.route("/pay")
+@app.route("/pay", methods=['POST'])
 def request_payment():
     order_number = "".join(random.choices(string.digits, k=6))
-    amount = request.values.get("amount")
+    if request.method == 'POST':
+        req = request.get_json()
+        # res = make_response(jsonify(req), 200)
+        amount = float(req["amount"])
+    print(amount)
 
     gw = gpwebpay.PaymentGateway()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PRIVATE_KEY)
     response = gw.request_payment(
         order_number=order_number, amount=amount, key_bytes=key_bytes
     )
+    print(response)
     return redirect(response.url)
 
 
