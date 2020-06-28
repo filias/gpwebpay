@@ -1,4 +1,5 @@
 /* basic */
+/* #032522 ,  #144a4a, #235247, #3c817b, #91b9b3, #e4e6e6 */
 body {
   font-family: "Ubuntu", sans-serif;
   margin: 0;
@@ -34,7 +35,8 @@ a {
 .container h4 {
   margin: 40px 0 40px 0;
   text-transform: uppercase;
-  height: 18px;
+  color: #144a4a;
+  font-size: 18px;
 }
 /* header */
 .header {
@@ -52,9 +54,13 @@ a {
 .header .logo {
   display: flex;
   align-items: center;
+  font-family: monospace;
+  color: #144a4a;
+  font-size: 20px;
 }
 .header .logo__image {
   width: 35px;
+  margin-right: 15px;
 }
 .shopping-cart {
   background-color: transparent;
@@ -100,7 +106,7 @@ a {
   font-weight: 500;
 }
 .shopping-list .btn {
-  border: #8aa989 solid 1px;
+  border: #3c817b solid 1px;
   background-color: #fff;
   color: #000;
   cursor: pointer;
@@ -108,7 +114,7 @@ a {
   margin-bottom: 20px;
 }
 .shopping-list .btn-checkout:hover {
-  background-color: #8aa989;
+  background-color: #3c817b;
   transition: 0.5s;
 }
 .shopping-list .btn-remove:hover {
@@ -142,7 +148,7 @@ a {
   text-transform: uppercase;
 }
 .header__menu .btn {
-  background-color: #8aa989;
+  background-color: #3c817b;
   margin-left: 20px;
   cursor: pointer;
 }
@@ -202,7 +208,7 @@ a {
 .products__info {
   margin-top: 20px;
   width: 100%;
-  background-color: #8aa989;
+  background-color: #3c817b;
   color: #fff;
   text-align: center;
   display: flex;
@@ -221,7 +227,7 @@ a {
   margin-left: 20px;
 }
 .products button {
-  background-color: #8aa989;
+  background-color: #3c817b;
   border: none;
   cursor: pointer;
   padding: 20px;
@@ -233,4 +239,42 @@ a {
 .products i {
   font-size: 20px;
   color: #fff;
+}
+
+.footer {
+  background-color: #144a4a;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  width: 100%;
+  text-align: left;
+  font: normal 16px sans-serif;
+  padding: 45px 50px;
+  margin-top: 75px;
+}
+
+.footer .footer-left p {
+  color: #8f9296;
+  font-size: 14px;
+}
+
+.footer .footer-right {
+  float: right;
+}
+
+.footer .footer-right a {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  border-radius: 2px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+  line-height: 35px;
+  margin-left: 3px;
+  transition: all 0.25s;
+}
+
+.footer .footer-right a:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
 }
