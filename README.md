@@ -7,13 +7,6 @@
 
 GPWebPay Gateway access with python.
 
-## How to run the tests
-
-To run the tests:
-```bash
- pytest
- ```
-
 ## Configuration
 
 Environmental variables needed:
@@ -65,6 +58,14 @@ gw.check_status(order_numer="123456")
 ```
 
 For more details refer to the [GPWebPay documentation](http://www.gpwebpay.cz/en/Download)
+
+
+## Tests
+
+To run the tests:
+```bash
+ pytest
+ ```
 
 
 ## Demo shop
