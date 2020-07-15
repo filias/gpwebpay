@@ -1,5 +1,5 @@
 # gpwebpay
-![Python application](https://github.com/filias/gpwebpay/workflows/Python%20application/badge.svg)
+![build](https://github.com/filias/gpwebpay/workflows/build/badge.svg)
 ![Tests](https://github.com/filias/gpwebpay/workflows/tests/badge.svg)
 [![codecov](https://codecov.io/gh/filias/gpwebpay/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/filias/gpwebpay?branch=master)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-370/)
