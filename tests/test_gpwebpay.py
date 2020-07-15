@@ -1,10 +1,8 @@
-import base64
 from collections import OrderedDict
 
 import requests
 import responses
 
-from gpwebpay.gpwebpay import PaymentGateway
 from gpwebpay.config import configuration
 
 
@@ -17,21 +15,20 @@ from gpwebpay.config import configuration
 # <GPWEBPAY_CURRENCY>|<GPWEBPAY_DEPOSIT_FLAG>|<GPWEBPAY_RESPONSE_URL>"
 
 
-def test_init():
-    gw = PaymentGateway()
-    assert gw
+def test_init(payment_gateway):
+    assert payment_gateway
 
 
 @responses.activate
-def test_connection():
-    gw = PaymentGateway()
+def test_connection(payment_gateway, private_key_bytes):
     responses.add(responses.POST, configuration.GPWEBPAY_TEST_URL, status=200)
-    key_bytes = base64.b64decode(configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY)
-    response = gw.request_payment(order_number="123456", amount=10, key_bytes=key_bytes)
+    response = payment_gateway.request_payment(
+        order_number="123456", amount=10, key_bytes=private_key_bytes
+    )
     assert response.status_code == 200
 
 
-def test_create_data(monkeypatch):
+def test_create_data(payment_gateway, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     expected_data = OrderedDict(
@@ -43,25 +40,23 @@ def test_create_data(monkeypatch):
         DEPOSITFLAG="1",
         URL="https://localhost:5000/payment_callback",
     )
-    gw = PaymentGateway()
-    gw._create_payment_data(order_number="123456", amount=10)
-    assert gw.data == expected_data
+    payment_gateway._create_payment_data(order_number="123456", amount=10)
+    assert payment_gateway.data == expected_data
 
 
-def test_create_message(monkeypatch):
+def test_create_message(payment_gateway, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     expected_message = (
         b"1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/"
         b"payment_callback"
     )
-    gw = PaymentGateway()
-    gw._create_payment_data(order_number="123456", amount=10)
-    message = gw._create_message(gw.data)
+    payment_gateway._create_payment_data(order_number="123456", amount=10)
+    message = payment_gateway._create_message(payment_gateway.data)
     assert message == expected_message
 
 
-def test_sign_data(monkeypatch):
+def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     # Created with java -jar digestProc.jar -s
@@ -73,16 +68,14 @@ def test_sign_data(monkeypatch):
         "Ahsk8DTN9ybohw4mQeZ2/LFcJklMdUuLKqJ/5MLwyV9/0jmxf2bZvymr4aj3S/wpLCJnZV5HDXqYXa"
         "VPokOwvnvGXwSMNw45h1zIwIXpQhig=="
     )
-    gw = PaymentGateway()
-    gw._create_payment_data(order_number="123456", amount=10)
-    message = gw._create_message(gw.data)
-    key_bytes = base64.b64decode(configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY)
-    gw._sign_message(message, key_bytes=key_bytes)
+    payment_gateway._create_payment_data(order_number="123456", amount=10)
+    message = payment_gateway._create_message(payment_gateway.data)
+    payment_gateway._sign_message(message, key_bytes=private_key_bytes)
 
-    assert gw.data["DIGEST"] == expected_digest.encode()
+    assert payment_gateway.data["DIGEST"] == expected_digest.encode()
 
 
-def test_verify_data():
+def test_verify_data(payment_gateway, public_key_bytes):
     url = "https://localhost:5000/payment_callback/"
     params = OrderedDict(
         OPERATION="CREATE_ORDER",
@@ -101,7 +94,5 @@ def test_verify_data():
         "PgaDY0eHLC7rL5vG80O+ZtFj7nYg1zZAzpWG/LS7z5HTaHk835pi1OMToWnhK4V60yEdQu"
         "uoO6OFTzB3Qefy3+5k/c9N6GNx7pXGUhCdhGkD/hA77QtUZww8IDlLrik4JYmw==",
     )
-    gw = PaymentGateway()
-    key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
     request = requests.Request(method="GET", url=url, params=params)
-    gw.verify_payment(request, key_bytes)
+    payment_gateway.verify_payment(request, key_bytes=public_key_bytes)
