@@ -36,7 +36,7 @@ def request_payment():
         amount = int(float(request.json.get("amount")) * 100)
 
     gw = gpwebpay.PaymentGateway()
-    key_bytes = base64.b64decode(configuration.GPWEBPAY_PRIVATE_KEY)
+    key_bytes = base64.b64decode(configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY)
     response = gw.request_payment(
         order_number=order_number, amount=amount, key_bytes=key_bytes
     )

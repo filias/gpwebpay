@@ -38,7 +38,9 @@ class PaymentGateway:
         # b) Apply EMSA-PKCS1-v1_5-ENCODE
         private_key = serialization.load_pem_private_key(
             key_bytes,
-            password=configuration.GPWEBPAY_PASSPHRASE.encode("UTF-8"),
+            password=configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE.encode(
+                "UTF-8"
+            ),
             backend=default_backend(),
         )
 
@@ -98,7 +100,7 @@ class PaymentGateway:
 
         return response
 
-    def verify_payment(self, request, key_bytes):
+    def verify_payment(self, request, key_bytes=None):
         if self._is_valid(request, key_bytes):
             # TODO: check what we need to return
             return "Verified"

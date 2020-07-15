@@ -35,8 +35,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       env:
-        GPWEBPAY_PRIVATE_KEY: ${{ secrets.GPWEBPAY_PRIVATE_KEY }}
-        GPWEBPAY_PASSPHRASE: ${{ secrets.GPWEBPAY_PASSPHRASE }}
+        GPWEBPAY_MERCHANT_PRIVATE_KEY: ${{ secrets.GPWEBPAY_MERCHANT_PRIVATE_KEY }}
+        GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE: ${{ secrets.GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE }}
         GPWEBPAY_PUBLIC_KEY: ${{ secrets.GPWEBPAY_PUBLIC_KEY }}
       run: |
         pytest
