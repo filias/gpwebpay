@@ -70,8 +70,7 @@ class PaymentGateway:
 
         # Load the public key
         public_key = x509.load_pem_x509_certificate(
-            key_bytes,
-            backend=default_backend(),
+            key_bytes, backend=default_backend(),
         ).public_key()
 
         # Verify the message

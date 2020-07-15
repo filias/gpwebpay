@@ -91,20 +91,17 @@ def test_verify_data():
         SRCODE="0",
         RESULTTEXT="OK",
         DIGEST="YgPdjK7zKtur9LQBNRsk5Rr8ue0U1MxP1tl3NJ2K/vSf1MhBzhKv74ho43pi44BAHgyxuhk"
-               "V5UrW9waE2Bp7l095vrNOwTGvJSb6usY2grzOkdqL7EZOJ9bDqpltggiTGADU8CdXlAzu1T"
-               "CR2rs7Ufp/Ez3rEQlSOCTtWTtVLmK8ipqq/U7g/20miNWXZGV9pGWDo6V5diFXJG7EadcUM"
-               "mKBzGe5+3UTFc2oO2WVcfgalIHKVfEwV7/KTEE1dRhD8Goj29JbHZx0xCRd8yRnMrd8DW/4"
-               "BGdjhF6EhpzjOuViiNjVptcl7npTFo0aV6t+pw+hP9bn8i0JN4+czhRtzw==",
+        "V5UrW9waE2Bp7l095vrNOwTGvJSb6usY2grzOkdqL7EZOJ9bDqpltggiTGADU8CdXlAzu1T"
+        "CR2rs7Ufp/Ez3rEQlSOCTtWTtVLmK8ipqq/U7g/20miNWXZGV9pGWDo6V5diFXJG7EadcUM"
+        "mKBzGe5+3UTFc2oO2WVcfgalIHKVfEwV7/KTEE1dRhD8Goj29JbHZx0xCRd8yRnMrd8DW/4"
+        "BGdjhF6EhpzjOuViiNjVptcl7npTFo0aV6t+pw+hP9bn8i0JN4+czhRtzw==",
         DIGEST1="OEiZFAFZ4AjeTSHF+I1eDodgTObVsB1xSqfziZOfYUj5nqL35n5XH6QQ1WphCPBjBUo8te"
-                "8IvkkaMoouJoDgWJcUbu1+UQQfbMD2M032o8shpiL/E+8YGr4s81RMqVwdfL516dEVJJvv"
-                "67uGOdo5wH5mgWzN5ZF7Aito3e7kgcOBkPlHyJq9QqvNJhXg4Bd3cueVQvICbe1FUyWED4"
-                "PgaDY0eHLC7rL5vG80O+ZtFj7nYg1zZAzpWG/LS7z5HTaHk835pi1OMToWnhK4V60yEdQu"
-                "uoO6OFTzB3Qefy3+5k/c9N6GNx7pXGUhCdhGkD/hA77QtUZww8IDlLrik4JYmw==",
+        "8IvkkaMoouJoDgWJcUbu1+UQQfbMD2M032o8shpiL/E+8YGr4s81RMqVwdfL516dEVJJvv"
+        "67uGOdo5wH5mgWzN5ZF7Aito3e7kgcOBkPlHyJq9QqvNJhXg4Bd3cueVQvICbe1FUyWED4"
+        "PgaDY0eHLC7rL5vG80O+ZtFj7nYg1zZAzpWG/LS7z5HTaHk835pi1OMToWnhK4V60yEdQu"
+        "uoO6OFTzB3Qefy3+5k/c9N6GNx7pXGUhCdhGkD/hA77QtUZww8IDlLrik4JYmw==",
     )
     gw = PaymentGateway()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
     request = requests.Request(method="GET", url=url, params=params)
     gw.verify_payment(request, key_bytes)
-
-
-
