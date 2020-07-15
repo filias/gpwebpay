@@ -33,7 +33,7 @@ jobs:
         GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE: ${{ secrets.GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE }}
         GPWEBPAY_PUBLIC_KEY: ${{ secrets.GPWEBPAY_PUBLIC_KEY }}
       run: |
-        pytest --cov=./ --cov-report=xml
+        pytest --cov=gpwebpay --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
