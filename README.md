@@ -2,7 +2,7 @@
 ![Python application](https://github.com/filias/gpwebpay/workflows/Python%20application/badge.svg)
 ![Tests](https://github.com/filias/gpwebpay/workflows/tests/badge.svg)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-370/)
-[![GitHub contributors](https://img.shields.io/github/contributors/filias/gpwebpay)](https://github.com/Naereen/StrapDown.js/graphs/contributors/)
+[![GitHub contributors](https://img.shields.io/github/contributors/filias/gpwebpay)](https://github.com/filias/gpwebpay/graphs/contributors/)
 
 GPWebPay Gateway access with python.
 
