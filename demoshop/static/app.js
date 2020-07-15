@@ -4,15 +4,12 @@
     const shopping_cart_icon = document.querySelector(".shopping-cart");
 
     shopping_cart_icon.addEventListener("click", function () {
-      console.log(shopping_cart_icon);
-      console.log(shopping_list);
       shopping_list.classList.toggle("hide");
     });
   };
   toggleShoppingList();
 
   const shoppingBtns = document.querySelectorAll(".products__btn");
-  console.log(shoppingBtns);
 
   //array of prices
   const productsInTheCart = [];
@@ -22,7 +19,6 @@
       if (event.target.parentElement.classList.contains("products__btn")) {
         let price = parseFloat(this.dataset.price);
         productsInTheCart.push(price);
-        console.log(productsInTheCart);
       }
       let total = sumPrice().toFixed(2);
       updateTotal(total);
@@ -41,3 +37,42 @@
     totalContainer.innerText = total;
   };
 })();
+
+const proceed_payment = () => {
+  let finalAmount = document.getElementById("total").innerText;
+
+  let amountObject = {
+    amount: finalAmount,
+  };
+
+  fetch(`${window.origin}/pay`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(amountObject),
+    cache: "no-cache",
+    // mode: "no-cors",
+    headers: new Headers({
+      "content-type": "application/json",
+    }),
+  })
+    .then(function (response) {
+      if (response.status !== 200) {
+        console.log(`There is an error! Status code: ${response.status}`);
+        return;
+      }
+      response.json().then(function (data) {
+        console.log("Redirecting to:", data["url"]);
+        window.location.href = data["url"];
+      });
+    })
+    .catch(function (error) {
+      console.log("Fetch error: " + error);
+    });
+};
+const openShoppingList = () => {
+  document.getElementById("shopping-list-sidebar").style.width = "250px";
+};
+
+const closeShoppingList = () => {
+  document.getElementById("shopping-list-sidebar").style.width = "0";
+};
