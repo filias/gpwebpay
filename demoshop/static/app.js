@@ -61,7 +61,8 @@ const proceed_payment = () => {
         return;
       }
       response.json().then(function (data) {
-        console.log(data);
+        console.log("Redirecting to:", data["url"]);
+        window.location.href = data["url"];
       });
     })
     .catch(function (error) {
