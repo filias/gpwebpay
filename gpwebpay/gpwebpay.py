@@ -1,8 +1,10 @@
 import base64
 import logging
 import requests
+import urllib.parse as urlparse
 from collections import OrderedDict
 from requests.models import Response
+from urllib.parse import parse_qs
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
@@ -53,15 +55,16 @@ class PaymentGateway:
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
-    def _create_callback_data(self, request):
-        data = OrderedDict()
-        for key, value in request.params.items():
-            data[key] = value
+    def _create_callback_data(self, url):
+        # All the data is in the querystring
+        parsed = urlparse.urlparse(url)
+        qs = parse_qs(parsed.query)
+        data = {key: value[0] for key, value in qs.items()}
         return data
 
-    def _is_valid(self, request, key_bytes):
+    def _is_valid(self, url, key_bytes):
         """Verify the validity of the response from GPWebPay"""
-        data = self._create_callback_data(request)
+        data = self._create_callback_data(url)
         digest = data.pop("DIGEST")  # Remove the DIGEST
         digest1 = data.pop("DIGEST1")  # Remove the DIGEST1
         # TODO: check with DIGEST1
@@ -100,10 +103,11 @@ class PaymentGateway:
 
         return response
 
-    def verify_payment(self, request, key_bytes=None):
-        if self._is_valid(request, key_bytes):
-            # TODO: check what we need to return
-            return "Verified"
+    def verify_payment(self, url, key_bytes=None):
+        if self._is_valid(url, key_bytes):
+            response = Response()
+            response.status_code = 200
+            return response
         else:
             error_response = Response()
             error_response.status_code = 401

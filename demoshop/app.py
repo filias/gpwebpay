@@ -47,8 +47,16 @@ def request_payment():
 @app.route("/payment_callback")
 def payment_callback():
     # TODO: call verify_payment
-    # verify_payment(self, request, key_bytes)
-    return "Your order is paid!"
+    gw = gpwebpay.PaymentGateway()
+    key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
+
+    response = gw.verify_payment(request.url, key_bytes)
+
+    if response.status_code == 200:
+        # TODO: Make some template for this
+        return "Your order is paid!"
+    else:
+        return response
 
 
 if __name__ == "__main__":
