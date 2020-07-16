@@ -50,13 +50,12 @@ def payment_callback():
     gw = gpwebpay.PaymentGateway()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
 
-    response = gw.verify_payment(request.url, key_bytes)
-
-    if response.status_code == 200:
+    if gw.is_payment_valid(request.url, key_bytes):
         # TODO: Make some template for this
         return "Your order is paid!"
     else:
-        return response
+        # TODO: Return the correct error
+        return "Some problem in your payment"
 
 
 if __name__ == "__main__":

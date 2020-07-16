@@ -88,6 +88,4 @@ def test_verify_payment_invalid_signature(payment_gateway, public_key_bytes):
         "%2F0aZ1A9JEP%2BL31lxRMCZDtFNt%2FaxdrjJG%2BjsKreCtrdDsCZ%2FwfwF4z6qEd74nNUOMLMbRF2a5w%2FeVE0U35cWxA%3D%3D"
     )
     url = urllib.parse.unquote(url)
-    response = payment_gateway.verify_payment(url, key_bytes=public_key_bytes)
-
-    assert response.status_code == 401
+    assert not payment_gateway.is_payment_valid(url, key_bytes=public_key_bytes)

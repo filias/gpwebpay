@@ -62,7 +62,25 @@ class PaymentGateway:
         data = {key: value[0] for key, value in qs.items()}
         return data
 
-    def _is_valid(self, url, key_bytes):
+    def request_payment(self, order_number=None, amount=0, key_bytes=None):
+        self._create_payment_data(order_number=order_number, amount=amount)
+        message = self._create_message(self.data)
+        self._sign_message(message, key_bytes=key_bytes)
+
+        # Send the request
+        # TODO: check if we need all these headers
+        headers = {
+            "accept-charset": "UTF-8",
+            "accept-encoding": "UTF-8",
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+        response = requests.post(
+            configuration.GPWEBPAY_TEST_URL, data=self.data, headers=headers
+        )
+
+        return response
+
+    def is_payment_valid(self, url, key_bytes=None):
         """Verify the validity of the response from GPWebPay"""
         data = self._create_callback_data(url)
         digest = data.pop("DIGEST")  # Remove the DIGEST
@@ -84,31 +102,3 @@ class PaymentGateway:
             return True
         except InvalidSignature:
             return False
-
-    def request_payment(self, order_number=None, amount=0, key_bytes=None):
-        self._create_payment_data(order_number=order_number, amount=amount)
-        message = self._create_message(self.data)
-        self._sign_message(message, key_bytes=key_bytes)
-
-        # Send the request
-        # TODO: check if we need all these headers
-        headers = {
-            "accept-charset": "UTF-8",
-            "accept-encoding": "UTF-8",
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-        response = requests.post(
-            configuration.GPWEBPAY_TEST_URL, data=self.data, headers=headers
-        )
-
-        return response
-
-    def verify_payment(self, url, key_bytes=None):
-        if self._is_valid(url, key_bytes):
-            response = Response()
-            response.status_code = 200
-            return response
-        else:
-            error_response = Response()
-            error_response.status_code = 401
-            return error_response
