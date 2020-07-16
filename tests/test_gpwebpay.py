@@ -1,6 +1,7 @@
+import urllib.parse
 from collections import OrderedDict
 
-import requests
+import pytest
 import responses
 
 from gpwebpay.config import configuration
@@ -75,24 +76,18 @@ def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
     assert payment_gateway.data["DIGEST"] == expected_digest.encode()
 
 
-def test_verify_data(payment_gateway, public_key_bytes):
-    url = "https://localhost:5000/payment_callback/"
-    params = OrderedDict(
-        OPERATION="CREATE_ORDER",
-        ORDERNUMBER="696623",
-        PRCODE="0",
-        SRCODE="0",
-        RESULTTEXT="OK",
-        DIGEST="YgPdjK7zKtur9LQBNRsk5Rr8ue0U1MxP1tl3NJ2K/vSf1MhBzhKv74ho43pi44BAHgyxuhk"
-        "V5UrW9waE2Bp7l095vrNOwTGvJSb6usY2grzOkdqL7EZOJ9bDqpltggiTGADU8CdXlAzu1T"
-        "CR2rs7Ufp/Ez3rEQlSOCTtWTtVLmK8ipqq/U7g/20miNWXZGV9pGWDo6V5diFXJG7EadcUM"
-        "mKBzGe5+3UTFc2oO2WVcfgalIHKVfEwV7/KTEE1dRhD8Goj29JbHZx0xCRd8yRnMrd8DW/4"
-        "BGdjhF6EhpzjOuViiNjVptcl7npTFo0aV6t+pw+hP9bn8i0JN4+czhRtzw==",
-        DIGEST1="OEiZFAFZ4AjeTSHF+I1eDodgTObVsB1xSqfziZOfYUj5nqL35n5XH6QQ1WphCPBjBUo8te"
-        "8IvkkaMoouJoDgWJcUbu1+UQQfbMD2M032o8shpiL/E+8YGr4s81RMqVwdfL516dEVJJvv"
-        "67uGOdo5wH5mgWzN5ZF7Aito3e7kgcOBkPlHyJq9QqvNJhXg4Bd3cueVQvICbe1FUyWED4"
-        "PgaDY0eHLC7rL5vG80O+ZtFj7nYg1zZAzpWG/LS7z5HTaHk835pi1OMToWnhK4V60yEdQu"
-        "uoO6OFTzB3Qefy3+5k/c9N6GNx7pXGUhCdhGkD/hA77QtUZww8IDlLrik4JYmw==",
+def test_verify_payment_invalid_signature(payment_gateway, public_key_bytes):
+    url = (
+        "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269701&PRCODE=0&SRCODE=0&RESULTTEXT"
+        "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
+        "Yku%2FX%2FqzPg31qbd2AKBeUqniYZ3NMyIw7WpGqNLmoBumA0RMDfcU38juTpIKq40FE7%2Fj1KHW2Lu6M2TDzj0T86PdKGLoFN%2BnQHLHg%"
+        "2BHFOpXJHH%2BbJiB7I1Sf4fkFZu23uOz73DykPjLM7wDYQj%2FkkOdC6V%2BNboTQAXFd8KLLji3eujD1dfxSfS1VMzrGoXsqXlb0Q9oAXuhd"
+        "4TvhcjSOTOzOZot47NCzhP0X8uElDXb5kXqrboegsvgRK8A%3D%3D&DIGEST1=WwI6L0sAb7PjwKS5biXRbU46Q%2BYOcJMtogdIojwxgUOD78"
+        "mzhyhncpsXRdkgqvA36WaOaDslQk%2FI5o5h1INBwvuZXPWJm1%2FEX0bY2wTzaeLsyxwG%2FuARkJrZLFNucOYytXICLeEMALeiR%2FacxcfQ"
+        "abQbfpy8orVFMmLX4RkfkfJD3t5ozp0ITsYCyXXzZZO%2BqdwdHVzDDVRTlcq9HyR1yBtEVGvaE4lXipR68jbT5qr7zyeWBzuknf5yLJPREFxV"
+        "%2F0aZ1A9JEP%2BL31lxRMCZDtFNt%2FaxdrjJG%2BjsKreCtrdDsCZ%2FwfwF4z6qEd74nNUOMLMbRF2a5w%2FeVE0U35cWxA%3D%3D"
     )
-    request = requests.Request(method="GET", url=url, params=params)
-    payment_gateway.verify_payment(request, key_bytes=public_key_bytes)
+    url = urllib.parse.unquote(url)
+    response = payment_gateway.verify_payment(url, key_bytes=public_key_bytes)
+
+    assert response.status_code == 401
