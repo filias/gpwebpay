@@ -35,7 +35,7 @@ gw = gpwebpay.PaymentGateway()
 
 # Get your merchant's private key
 private_key = os.getenv("GPWEBPAY_MERCHANT_PRIVATE_KEY")
-# Encode your private key with base64
+# Decode your private key with base64
 key_bytes = base64.b64decode(private_key)
 
 # Call this method to request a payment to GPWebPay.
@@ -45,12 +45,12 @@ gw.request_payment(order_numer="123456", amount=999, key_bytes=key_bytes)
 
 # Get GPWebPay's public key
 public_key = os.getenv("GPWEBPAY_PUBLIC_KEY")
-# Encode it with base64
+# Decode it with base64
 key_bytes = base64.b64decode(public_key)
 
 # Call this method to verify the response from GPWebPay
-# You need to pass here the request you received on the callback
-gw.verify_payment(request, key_bytes=key_bytes)
+# You need to pass here the url you received on the callback
+gw.verify_payment(url, key_bytes=key_bytes)
 
 # Call this method to check the status of a payment
 gw.check_status(order_numer="123456")
