@@ -29,6 +29,7 @@ jobs:
         poetry install
     - name: Generate coverage report
       env:
+        GPWEBPAY_MERCHANT_ID: ${{ secrets.GPWEBPAY_MERCHANT_ID }}
         GPWEBPAY_MERCHANT_PRIVATE_KEY: ${{ secrets.GPWEBPAY_MERCHANT_PRIVATE_KEY }}
         GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE: ${{ secrets.GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE }}
         GPWEBPAY_PUBLIC_KEY: ${{ secrets.GPWEBPAY_PUBLIC_KEY }}
