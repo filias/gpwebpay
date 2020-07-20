@@ -2,12 +2,17 @@
 ![Build](https://github.com/filias/gpwebpay/workflows/build/badge.svg)
 ![Tests](https://github.com/filias/gpwebpay/workflows/tests/badge.svg)
 [![codecov](https://codecov.io/gh/filias/gpwebpay/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/filias/gpwebpay?branch=master)
-[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![GitHub contributors](https://img.shields.io/github/contributors/filias/gpwebpay)](https://github.com/filias/gpwebpay/graphs/contributors/)
+[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
+[![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://https://github.com/psf/black)
 
 GPWebPay Gateway access with python.
 
-## Configuration
+* Free software: MIT license
+
+Configuration
+-------
 
 Environmental variables needed:
 ```
@@ -23,7 +28,7 @@ GPWEBPAY_DEPOSIT_FLAG = "1"                     # Requests instant payment
 GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE = ""   # If any
 ```
 
-To use this package create a PaymentGateway:
+To use this package create a GpwebpayClient:
 
 ```python
 import base64
@@ -50,7 +55,7 @@ key_bytes = base64.b64decode(public_key)
 
 # Call this method to verify the response from GPWebPay
 # You need to pass here the url you received on the callback
-gw.is_payment_valid(url, key_bytes=key_bytes)
+gw.is_response_valid(url, key_bytes=key_bytes)
 
 # Call this method to check the status of a payment (To be implemented)
 gw.check_status(order_numer="123456")
@@ -60,7 +65,8 @@ gw.check_status(order_numer="123456")
 For more details refer to the [GPWebPay documentation](http://www.gpwebpay.cz/en/Download)
 
 
-## Tests
+Tests
+-------
 
 To run the tests:
 ```bash
@@ -68,7 +74,9 @@ To run the tests:
  ```
 
 
-## Demo shop
+Demo shop
+-------
+
 There is a demoshop folder which demonstrates the usage of this package in your webshop.
 It is a flask app.
 
@@ -80,10 +88,20 @@ python demoshop/app.py
 ```
 
 
-# Development
+Development
+-------
 We use poetry to manage dependencies, packaging and publishing.
 If you want to develop locally [install poetry](https://python-poetry.org/docs/#installation) and run:
 
 ```bash
 poetry install
 ```
+
+
+Credits
+-------
+
+This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
