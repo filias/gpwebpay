@@ -27,11 +27,15 @@ class GpwebpayClient:
         self.data["AMOUNT"] = str(amount)
         self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
         self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
-        self.data["URL"] = configuration.GPWEBPAY_RESPONSE_URL
+        self.data["URL"] = configuration.GPWEBPAY_MERCHANT_CALLBACK_URL
 
-    def _create_message(self, data):
+    def _create_message(self, data, is_digest_1=False):
         # Create message according to GPWebPay documentation (4.1.1)
         message = "|".join(data.values())
+
+        if is_digest_1:  # Add the MERCHANT_ID
+            message += "|" + configuration.GPWEBPAY_MERCHANT_ID
+
         return message.encode("utf-8")
 
     def _sign_message(self, message_bytes, key_bytes):
@@ -74,30 +78,37 @@ class GpwebpayClient:
             "Content-Type": "application/x-www-form-urlencoded",
         }
         response = requests.post(
-            configuration.GPWEBPAY_TEST_URL, data=self.data, headers=headers
+            configuration.GPWEBPAY_URL, data=self.data, headers=headers
         )
 
         return response
 
-    def is_payment_valid(self, url, key_bytes=None):
-        """Verify the validity of the response from GPWebPay"""
+    def is_response_valid(self, url, key_bytes=None):
+        """Verify the validity of the response from GPWebPay
+
+        The response can be a request when the merchant's callback is used.
+        """
         data = self._create_callback_data(url)
         digest = data.pop("DIGEST")  # Remove the DIGEST
         digest1 = data.pop("DIGEST1")  # Remove the DIGEST1
-        # TODO: check with DIGEST1
-        message = self._create_message(data)
 
-        # Decode the DIGEST using base64
+        # Create the messages. One for DIGEST and another for DIGEST1
+        message = self._create_message(data)
+        message1 = self._create_message(data, is_digest_1=True)
+
+        # Decode the DIGESTs using base64
         signature = base64.b64decode(digest)
+        signature1 = base64.b64decode(digest1)
 
         # Load the public key
         public_key = x509.load_pem_x509_certificate(
             key_bytes, backend=default_backend(),
         ).public_key()
 
-        # Verify the message
+        # Verify the messages
         try:
             public_key.verify(signature, message, padding.PKCS1v15(), hashes.SHA1())
+            public_key.verify(signature1, message1, padding.PKCS1v15(), hashes.SHA1())
             return True
         except InvalidSignature:
             return False

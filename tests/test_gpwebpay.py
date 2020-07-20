@@ -22,7 +22,7 @@ def test_init(payment_gateway):
 
 @responses.activate
 def test_connection(payment_gateway, private_key_bytes):
-    responses.add(responses.POST, configuration.GPWEBPAY_TEST_URL, status=200)
+    responses.add(responses.POST, configuration.GPWEBPAY_URL, status=200)
     response = payment_gateway.request_payment(
         order_number="123456", amount=10, key_bytes=private_key_bytes
     )
@@ -76,7 +76,7 @@ def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
     assert payment_gateway.data["DIGEST"] == expected_digest.encode()
 
 
-def test_verify_payment_callback_invalid_signature(payment_gateway, public_key_bytes):
+def test_is_response_valid_invalid_signature(payment_gateway, public_key_bytes):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269701&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
@@ -88,9 +88,9 @@ def test_verify_payment_callback_invalid_signature(payment_gateway, public_key_b
         "%2F0aZ1A9JEP%2BL31lxRMCZDtFNt%2FaxdrjJG%2BjsKreCtrdDsCZ%2FwfwF4z6qEd74nNUOMLMbRF2a5w%2FeVE0U35cWxA%3D%3D"
     )
     url = urllib.parse.unquote(url)
-    assert not payment_gateway.is_payment_valid(url, key_bytes=public_key_bytes)
+    assert not payment_gateway.is_response_valid(url, key_bytes=public_key_bytes)
 
 
 # TODO: implement this test
-def test_verify_payment_callback_valid_signature(payment_gateway, public_key_bytes):
+def test_is_response_valid(payment_gateway, public_key_bytes):
     pass
