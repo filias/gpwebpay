@@ -76,9 +76,23 @@ def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
     assert payment_gateway.data["DIGEST"] == expected_digest.encode()
 
 
+def test_is_response_valid(payment_gateway, public_key_bytes):
+    url = (
+        "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=364909&PRCODE=0&SRCODE=0&RESULTTEXT"
+        "=OK&DIGEST=ZvBxMrvxZT5ifTsA%2Fp9r8S0A8YfSZfNvUoVOenbR6GPDOVIFgPOr7ywx%2Bhv3o%2BTalq0GT0WKizSKwlLsoPdfzWCckOtwJ"
+        "qyClnEgDZ2%2FjqVwQ9tVa2XIMdoPTrsBzaTJMEmm7t%2FDN7hlbVj9LuFH5kM6ZQO4Y02v8oWB8184PprQl6yeXz8QvCBmqgZwOyZG9R7F66j"
+        "K2G5y3BUQ3TDuLPM%2FNGlku594iV1iGfsH2v9n%2Bx6rMrWIL9i1ZMk46nTGLutm%2FEuBpKzeSN66pJPyMVg1sLFzfwxAbIUgLQWfL73H9q%"
+        "2BalNrgz2ODkdFPeNzmr0Ei6W6DNEy%2FGzgspHq3bw%3D%3D&DIGEST1=QbTY4GUBw8bG1T46v97fe9flre%2FewJYr2nnyw2DUO3VnEzEhhY"
+        "53dcKQpFcFR9PzQDI98UWo9S1MADzPLVQves5MMa1JEDHMi5MjOLt2WQsnkBWwqUCfoITEbxJfIkmv5FQaKqZRhKJ2COnYQgeAHoy4%2FFdbKd"
+        "WcdJa9x6h074OJ%2BDDVK2dIaNnHofoPBtluOfNdj3FBF8HbCCHg2OundLljo4F7OnZ26d5Sea3GKQG8%2FxQHw8m%2BSLSAG4AS%2Bzk3oQW9"
+        "r6%2BmYMH4R4BZlOOUXcDngxgMBJ86FGrGI4WnS6ddynjJIeFD236WBv8o0uRJaTZa67xD%2Fjx6Ch2zRiVGBw%3D%3D"
+    )
+    assert payment_gateway.is_response_valid(url, key_bytes=public_key_bytes)
+
+
 def test_is_response_valid_invalid_signature(payment_gateway, public_key_bytes):
     url = (
-        "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269701&PRCODE=0&SRCODE=0&RESULTTEXT"
+        "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269700&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
         "Yku%2FX%2FqzPg31qbd2AKBeUqniYZ3NMyIw7WpGqNLmoBumA0RMDfcU38juTpIKq40FE7%2Fj1KHW2Lu6M2TDzj0T86PdKGLoFN%2BnQHLHg%"
         "2BHFOpXJHH%2BbJiB7I1Sf4fkFZu23uOz73DykPjLM7wDYQj%2FkkOdC6V%2BNboTQAXFd8KLLji3eujD1dfxSfS1VMzrGoXsqXlb0Q9oAXuhd"
@@ -89,8 +103,3 @@ def test_is_response_valid_invalid_signature(payment_gateway, public_key_bytes):
     )
     url = urllib.parse.unquote(url)
     assert not payment_gateway.is_response_valid(url, key_bytes=public_key_bytes)
-
-
-# TODO: implement this test
-def test_is_response_valid(payment_gateway, public_key_bytes):
-    pass

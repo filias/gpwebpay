@@ -58,7 +58,7 @@ class GpwebpayClient:
         # Put the digest in the data
         self.data["DIGEST"] = digest
 
-    def _create_callback_data(self, url):
+    def _create_response_data(self, url):
         # All the data is in the querystring
         parsed = urlparse.urlparse(url)
         qs = parse_qs(parsed.query)
@@ -88,7 +88,7 @@ class GpwebpayClient:
 
         The response can be a request when the merchant's callback is used.
         """
-        data = self._create_callback_data(url)
+        data = self._create_response_data(url)
         digest = data.pop("DIGEST")  # Remove the DIGEST
         digest1 = data.pop("DIGEST1")  # Remove the DIGEST1
 
