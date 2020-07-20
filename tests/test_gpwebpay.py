@@ -76,7 +76,7 @@ def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
     assert payment_gateway.data["DIGEST"] == expected_digest.encode()
 
 
-def test_verify_payment_invalid_signature(payment_gateway, public_key_bytes):
+def test_verify_payment_callback_invalid_signature(payment_gateway, public_key_bytes):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269701&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
@@ -89,3 +89,8 @@ def test_verify_payment_invalid_signature(payment_gateway, public_key_bytes):
     )
     url = urllib.parse.unquote(url)
     assert not payment_gateway.is_payment_valid(url, key_bytes=public_key_bytes)
+
+
+# TODO: implement this test
+def test_verify_payment_callback_valid_signature(payment_gateway, public_key_bytes):
+    pass

@@ -35,7 +35,7 @@ def request_payment():
     if request.method == "POST":
         amount = int(float(request.json.get("amount")) * 100)
 
-    gw = gpwebpay.PaymentGateway()
+    gw = gpwebpay.GpwebpayClient()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY)
     response = gw.request_payment(
         order_number=order_number, amount=amount, key_bytes=key_bytes
@@ -47,7 +47,7 @@ def request_payment():
 @app.route("/payment_callback")
 def payment_callback():
     # TODO: call verify_payment
-    gw = gpwebpay.PaymentGateway()
+    gw = gpwebpay.GpwebpayClient()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
 
     if gw.is_payment_valid(request.url, key_bytes):

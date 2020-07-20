@@ -31,7 +31,7 @@ import os
 
 from gpwebpay import gpwebpay
 
-gw = gpwebpay.PaymentGateway()
+gw = gpwebpay.GpwebpayClient()
 
 # Get your merchant's private key
 private_key = os.getenv("GPWEBPAY_MERCHANT_PRIVATE_KEY")

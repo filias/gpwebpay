@@ -3,12 +3,12 @@ import base64
 import pytest
 
 from gpwebpay.config import configuration
-from gpwebpay.gpwebpay import PaymentGateway
+from gpwebpay.gpwebpay import GpwebpayClient
 
 
 @pytest.fixture()
 def payment_gateway():
-    return PaymentGateway()
+    return GpwebpayClient()
 
 
 @pytest.fixture()

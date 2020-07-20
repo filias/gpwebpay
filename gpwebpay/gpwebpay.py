@@ -3,7 +3,6 @@ import logging
 import requests
 import urllib.parse as urlparse
 from collections import OrderedDict
-from requests.models import Response
 from urllib.parse import parse_qs
 
 from cryptography.exceptions import InvalidSignature
@@ -18,7 +17,7 @@ from .config import configuration
 _logger = logging.getLogger(__name__)
 
 
-class PaymentGateway:
+class GpwebpayClient:
     def _create_payment_data(self, order_number="", amount=0):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
