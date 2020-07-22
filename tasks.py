@@ -8,7 +8,7 @@ def tests(c):
 
 @task
 def lint(c):
-    c.run("pylint gpwebpay")
+    c.run("pylint gpwebpay --fail-under 8")
 
 
 @task
