@@ -8,7 +8,7 @@ def tests(c):
 
 @task
 def lint(c):
-    c.run("pylint gwebpay tests")
+    c.run("pylint gwebpay")
 
 
 @task
