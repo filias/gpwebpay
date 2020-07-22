@@ -1,10 +1,10 @@
 import base64
 import logging
-import requests
 import urllib.parse as urlparse
 from collections import OrderedDict
 from urllib.parse import parse_qs
 
+import requests
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
@@ -18,6 +18,9 @@ _logger = logging.getLogger(__name__)
 
 
 class GpwebpayClient:
+    def __init__(self):
+        self.data = None
+
     def _create_payment_data(self, order_number="", amount=0):
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
@@ -61,8 +64,8 @@ class GpwebpayClient:
     def _create_response_data(self, url):
         # All the data is in the querystring
         parsed = urlparse.urlparse(url)
-        qs = parse_qs(parsed.query)
-        data = {key: value[0] for key, value in qs.items()}
+        query_string = parse_qs(parsed.query)
+        data = {key: value[0] for key, value in query_string.items()}
         return data
 
     def request_payment(self, order_number=None, amount=0, key_bytes=None):
