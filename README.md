@@ -7,9 +7,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://https://github.com/psf/black)
 
-GPWebPay Gateway access with python.
+GPWebPay Gateway access with Python.
 
-* Free software: MIT license
+This library is meant to be used by merchants that own a webshop and use GpWebPay as its payment gateway.
+At the moment there are code examples for using GPWebPay in a webshop with PHP, where developers can see how to
+sign and verify messages exchanged with the payment gateway.
+
+With this package you can also do it in Python.
 
 Configuration
 -------
@@ -96,12 +100,3 @@ If you want to develop locally [install poetry](https://python-poetry.org/docs/#
 ```bash
 poetry install
 ```
-
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
