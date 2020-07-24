@@ -7,7 +7,7 @@ from gpwebpay.gpwebpay import GpwebpayClient
 
 
 @pytest.fixture()
-def payment_gateway():
+def gateway_client():
     return GpwebpayClient()
 
 

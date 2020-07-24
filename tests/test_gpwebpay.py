@@ -1,7 +1,6 @@
 import urllib.parse
 from collections import OrderedDict
 
-import pytest
 import responses
 
 from gpwebpay.config import configuration
@@ -16,20 +15,20 @@ from gpwebpay.config import configuration
 # <GPWEBPAY_CURRENCY>|<GPWEBPAY_DEPOSIT_FLAG>|<GPWEBPAY_RESPONSE_URL>"
 
 
-def test_init(payment_gateway):
-    assert payment_gateway
+def test_init(gateway_client):
+    assert gateway_client
 
 
 @responses.activate
-def test_connection(payment_gateway, private_key_bytes):
+def test_connection(gateway_client, private_key_bytes):
     responses.add(responses.POST, configuration.GPWEBPAY_URL, status=200)
-    response = payment_gateway.request_payment(
+    response = gateway_client.request_payment(
         order_number="123456", amount=10, key_bytes=private_key_bytes
     )
     assert response.status_code == 200
 
 
-def test_create_data(payment_gateway, monkeypatch):
+def test_create_data(gateway_client, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     expected_data = OrderedDict(
@@ -41,23 +40,23 @@ def test_create_data(payment_gateway, monkeypatch):
         DEPOSITFLAG="1",
         URL="https://localhost:5000/payment_callback",
     )
-    payment_gateway._create_payment_data(order_number="123456", amount=10)
-    assert payment_gateway.data == expected_data
+    gateway_client._create_payment_data(order_number="123456", amount=10)
+    assert gateway_client.data == expected_data
 
 
-def test_create_message(payment_gateway, monkeypatch):
+def test_create_message(gateway_client, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     expected_message = (
         b"1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/"
         b"payment_callback"
     )
-    payment_gateway._create_payment_data(order_number="123456", amount=10)
-    message = payment_gateway._create_message(payment_gateway.data)
+    gateway_client._create_payment_data(order_number="123456", amount=10)
+    message = gateway_client._create_message(gateway_client.data)
     assert message == expected_message
 
 
-def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
+def test_sign_data(gateway_client, private_key_bytes, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     # Created with java -jar digestProc.jar -s
@@ -69,14 +68,14 @@ def test_sign_data(payment_gateway, private_key_bytes, monkeypatch):
         "Ahsk8DTN9ybohw4mQeZ2/LFcJklMdUuLKqJ/5MLwyV9/0jmxf2bZvymr4aj3S/wpLCJnZV5HDXqYXa"
         "VPokOwvnvGXwSMNw45h1zIwIXpQhig=="
     )
-    payment_gateway._create_payment_data(order_number="123456", amount=10)
-    message = payment_gateway._create_message(payment_gateway.data)
-    payment_gateway._sign_message(message, key_bytes=private_key_bytes)
+    gateway_client._create_payment_data(order_number="123456", amount=10)
+    message = gateway_client._create_message(gateway_client.data)
+    gateway_client._sign_message(message, key_bytes=private_key_bytes)
 
-    assert payment_gateway.data["DIGEST"] == expected_digest.encode()
+    assert gateway_client.data["DIGEST"] == expected_digest.encode()
 
 
-def test_is_response_valid(payment_gateway, public_key_bytes):
+def test_is_callback_valid(gateway_client, public_key_bytes):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=364909&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=ZvBxMrvxZT5ifTsA%2Fp9r8S0A8YfSZfNvUoVOenbR6GPDOVIFgPOr7ywx%2Bhv3o%2BTalq0GT0WKizSKwlLsoPdfzWCckOtwJ"
@@ -87,10 +86,10 @@ def test_is_response_valid(payment_gateway, public_key_bytes):
         "WcdJa9x6h074OJ%2BDDVK2dIaNnHofoPBtluOfNdj3FBF8HbCCHg2OundLljo4F7OnZ26d5Sea3GKQG8%2FxQHw8m%2BSLSAG4AS%2Bzk3oQW9"
         "r6%2BmYMH4R4BZlOOUXcDngxgMBJ86FGrGI4WnS6ddynjJIeFD236WBv8o0uRJaTZa67xD%2Fjx6Ch2zRiVGBw%3D%3D"
     )
-    assert payment_gateway.is_response_valid(url, key_bytes=public_key_bytes)
+    assert gateway_client.is_callback_valid(url, key_bytes=public_key_bytes)
 
 
-def test_is_response_valid_invalid_signature(payment_gateway, public_key_bytes):
+def test_is_callback_valid_invalid_signature(gateway_client, public_key_bytes):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269700&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
@@ -102,4 +101,4 @@ def test_is_response_valid_invalid_signature(payment_gateway, public_key_bytes):
         "%2F0aZ1A9JEP%2BL31lxRMCZDtFNt%2FaxdrjJG%2BjsKreCtrdDsCZ%2FwfwF4z6qEd74nNUOMLMbRF2a5w%2FeVE0U35cWxA%3D%3D"
     )
     url = urllib.parse.unquote(url)
-    assert not payment_gateway.is_response_valid(url, key_bytes=public_key_bytes)
+    assert not gateway_client.is_callback_valid(url, key_bytes=public_key_bytes)

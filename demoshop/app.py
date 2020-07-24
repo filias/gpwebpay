@@ -50,7 +50,7 @@ def payment_callback():
     gw = gpwebpay.GpwebpayClient()
     key_bytes = base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
 
-    if gw.is_response_valid(request.url, key_bytes):
+    if gw.is_callback_valid(request.url, key_bytes):
         # TODO: Make some template for this
         return "Your order is paid!"
     else:

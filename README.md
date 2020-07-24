@@ -59,11 +59,8 @@ key_bytes = base64.b64decode(public_key)
 
 # Call this method to verify the response from GPWebPay
 # You need to pass here the url you received on the callback
-gw.is_response_valid(url, key_bytes=key_bytes)
-
-# Call this method to check the status of a payment (To be implemented)
-gw.check_status(order_numer="123456")
-
+# Its querystring contains the data to verify the message
+gw.is_callback_valid(url, key_bytes=key_bytes)
 ```
 
 For more details refer to the [GPWebPay documentation](http://www.gpwebpay.cz/en/Download)
