@@ -13,7 +13,8 @@ This library is meant to be used by merchants that own a webshop and use GpWebPa
 At the moment there are code examples for using GPWebPay in a webshop with PHP, where developers can see how to
 sign and verify messages exchanged with the payment gateway.
 
-With this package you can also do it in Python.
+With this package you can also do it in Python and you can find an example of its usage in a webshop in the 
+[demoshop repository](https://github.com/filias/gpwebpay_demoshop) 
 
 Configuration
 -------
@@ -73,20 +74,6 @@ To run the tests:
 ```bash
  pytest
  ```
-
-
-Demo shop
--------
-
-There is a demoshop folder which demonstrates the usage of this package in your webshop.
-It is a flask app.
-
-You will need to setup the environmental variables mentioned above for it to work.
-
-To run it locally:
-```bash
-python demoshop/app.py
-```
 
 
 Development
