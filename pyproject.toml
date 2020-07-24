@@ -8,7 +8,6 @@ authors = ["Filipa Andrade <filipa.andrade@gmail.com>"]
 python = ">3.7"
 cryptography="2.8"
 requests="2.23"
-flask = "^1.1.2"
 python-dotenv = "^0.13.0"
 invoke = "^1.4.1"
 tox = "^3.17.1"
