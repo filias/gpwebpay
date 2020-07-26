@@ -1,6 +1,7 @@
 import urllib.parse
 from collections import OrderedDict
 
+import pytest
 import responses
 
 from gpwebpay.config import configuration
@@ -75,7 +76,7 @@ def test_sign_data(gateway_client, private_key_bytes, monkeypatch):
     assert gateway_client.data["DIGEST"] == expected_digest.encode()
 
 
-def test_is_callback_valid(gateway_client, public_key_bytes):
+def test_get_payment_result(gateway_client, public_key_bytes):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=364909&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=ZvBxMrvxZT5ifTsA%2Fp9r8S0A8YfSZfNvUoVOenbR6GPDOVIFgPOr7ywx%2Bhv3o%2BTalq0GT0WKizSKwlLsoPdfzWCckOtwJ"
@@ -86,10 +87,10 @@ def test_is_callback_valid(gateway_client, public_key_bytes):
         "WcdJa9x6h074OJ%2BDDVK2dIaNnHofoPBtluOfNdj3FBF8HbCCHg2OundLljo4F7OnZ26d5Sea3GKQG8%2FxQHw8m%2BSLSAG4AS%2Bzk3oQW9"
         "r6%2BmYMH4R4BZlOOUXcDngxgMBJ86FGrGI4WnS6ddynjJIeFD236WBv8o0uRJaTZa67xD%2Fjx6Ch2zRiVGBw%3D%3D"
     )
-    assert gateway_client.is_callback_valid(url, key_bytes=public_key_bytes)
+    assert gateway_client.get_payment_result(url, key_bytes=public_key_bytes) == "OK"
 
 
-def test_is_callback_valid_invalid_signature(gateway_client, public_key_bytes):
+def test_get_payment_result_with_invalid_signature(gateway_client, public_key_bytes):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269700&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
@@ -100,5 +101,11 @@ def test_is_callback_valid_invalid_signature(gateway_client, public_key_bytes):
         "abQbfpy8orVFMmLX4RkfkfJD3t5ozp0ITsYCyXXzZZO%2BqdwdHVzDDVRTlcq9HyR1yBtEVGvaE4lXipR68jbT5qr7zyeWBzuknf5yLJPREFxV"
         "%2F0aZ1A9JEP%2BL31lxRMCZDtFNt%2FaxdrjJG%2BjsKreCtrdDsCZ%2FwfwF4z6qEd74nNUOMLMbRF2a5w%2FeVE0U35cWxA%3D%3D"
     )
-    url = urllib.parse.unquote(url)
-    assert not gateway_client.is_callback_valid(url, key_bytes=public_key_bytes)
+    assert (
+        gateway_client.get_payment_result(url, key_bytes=public_key_bytes)
+        == "The payment communication was compromised."
+    )
+
+
+def test_get_payment_result_with_error(gateway_client, public_key_bytes):
+    pass

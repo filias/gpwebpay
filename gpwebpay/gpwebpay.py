@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography import x509
 
 from .config import configuration
-
+from .return_codes import PRCODE, SRCODE
 
 _logger = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ class GpwebpayClient:
 
         return response
 
-    def is_callback_valid(self, url, key_bytes=None):
+    def _is_callback_valid(self, url, key_bytes=None):
         """Verify the validity of the response from GPWebPay
 
         The response can be a request when the merchant's callback is used.
@@ -109,9 +109,24 @@ class GpwebpayClient:
         ).public_key()
 
         # Verify the messages
+        public_key.verify(signature, message, padding.PKCS1v15(), hashes.SHA1())
+        public_key.verify(signature1, message1, padding.PKCS1v15(), hashes.SHA1())
+        return data
+
+    def _process_data(self, data):
+        """Processes the data from GPWebPay, making it readable"""
+        result_text = data.get("RESULTTEXT")
+        if result_text != "OK":
+            primary_code = PRCODE[data.get("PRCODE")]
+            secondary_code = SRCODE[data.get("SRCODE")]
+            return f"{primary_code} {secondary_code}"
+
+        return result_text
+
+    def get_payment_result(self, url, key_bytes=None):
+        """Returns the result of the payment from the callback request"""
         try:
-            public_key.verify(signature, message, padding.PKCS1v15(), hashes.SHA1())
-            public_key.verify(signature1, message1, padding.PKCS1v15(), hashes.SHA1())
-            return True
+            data = self._is_callback_valid(url, key_bytes=key_bytes)
+            return self._process_data(data)
         except InvalidSignature:
-            return False
+            return "The payment communication was compromised."
