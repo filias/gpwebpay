@@ -1,8 +1,8 @@
 # gpwebpay
-![Build](https://github.com/filias/gpwebpay/workflows/build/badge.svg)
-![Tests](https://github.com/filias/gpwebpay/workflows/tests/badge.svg)
-[![codecov](https://codecov.io/gh/filias/gpwebpay/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/filias/gpwebpay?branch=master)
-[![GitHub contributors](https://img.shields.io/github/contributors/filias/gpwebpay)](https://github.com/filias/gpwebpay/graphs/contributors/)
+![Build](https://github.com/vintesk/gpwebpay/workflows/build/badge.svg)
+![Tests](https://github.com/vintesk/gpwebpay/workflows/tests/badge.svg)
+[![codecov](https://codecov.io/gh/vintesk/gpwebpay/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/vintesk/gpwebpay?branch=master)
+[![GitHub contributors](https://img.shields.io/github/contributors/vintesk/gpwebpay)](https://github.com/vintesk/gpwebpay/graphs/contributors/)
 [![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-370/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://https://github.com/psf/black)
@@ -14,7 +14,7 @@ At the moment there are code examples for using GPWebPay in a webshop with PHP, 
 sign and verify messages exchanged with the payment gateway.
 
 With this package you can also do it in Python and you can find an example of its usage in a webshop in the 
-[demoshop repository](https://github.com/filias/gpwebpay_demoshop) 
+[demoshop repository](https://github.com/vintesk/gpwebpay_demoshop) 
 
 Configuration
 -------
