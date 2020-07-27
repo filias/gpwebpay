@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gpwebpay"
-version = "0.1.0"
+version = "0.1.1"
 description = "GPWebPay Gateway access with Python"
 license = "MIT"
 authors = ["Filipa Andrade <filipa.andrade@gmail.com>"]
