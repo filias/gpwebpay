@@ -64,7 +64,7 @@ key_bytes = base64.b64decode(public_key)
 gw.is_callback_valid(url, key_bytes=key_bytes)
 ```
 
-For more details refer to the [GPWebPay documentation](http://www.gpwebpay.cz/en/Download)
+For more details refer to the [GPWebPay documentation](https://www.gpwebpay.cz/en/Download.html)
 
 
 Tests
