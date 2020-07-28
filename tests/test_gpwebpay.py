@@ -21,10 +21,10 @@ def test_init(gateway_client):
 
 
 @responses.activate
-def test_connection(gateway_client, private_key_bytes):
+def test_connection(gateway_client, private_key):
     responses.add(responses.POST, configuration.GPWEBPAY_URL, status=200)
     response = gateway_client.request_payment(
-        order_number="123456", amount=10, key_bytes=private_key_bytes
+        order_number="123456", amount=10, key=private_key
     )
     assert response.status_code == 200
 
@@ -57,7 +57,7 @@ def test_create_message(gateway_client, monkeypatch):
     assert message == expected_message
 
 
-def test_sign_data(gateway_client, private_key_bytes, monkeypatch):
+def test_sign_data(gateway_client, private_key, monkeypatch):
     monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
 
     # Created with java -jar digestProc.jar -s
@@ -71,12 +71,12 @@ def test_sign_data(gateway_client, private_key_bytes, monkeypatch):
     )
     gateway_client._create_payment_data(order_number="123456", amount=10)
     message = gateway_client._create_message(gateway_client.data)
-    gateway_client._sign_message(message, key_bytes=private_key_bytes)
+    gateway_client._sign_message(message, key=private_key)
 
     assert gateway_client.data["DIGEST"] == expected_digest.encode()
 
 
-def test_get_payment_result(gateway_client, public_key_bytes):
+def test_get_payment_result(gateway_client, public_key):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=364909&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=ZvBxMrvxZT5ifTsA%2Fp9r8S0A8YfSZfNvUoVOenbR6GPDOVIFgPOr7ywx%2Bhv3o%2BTalq0GT0WKizSKwlLsoPdfzWCckOtwJ"
@@ -87,10 +87,17 @@ def test_get_payment_result(gateway_client, public_key_bytes):
         "WcdJa9x6h074OJ%2BDDVK2dIaNnHofoPBtluOfNdj3FBF8HbCCHg2OundLljo4F7OnZ26d5Sea3GKQG8%2FxQHw8m%2BSLSAG4AS%2Bzk3oQW9"
         "r6%2BmYMH4R4BZlOOUXcDngxgMBJ86FGrGI4WnS6ddynjJIeFD236WBv8o0uRJaTZa67xD%2Fjx6Ch2zRiVGBw%3D%3D"
     )
-    assert gateway_client.get_payment_result(url, key_bytes=public_key_bytes) == "OK"
+    excepted_data = {
+        "OPERATION": "CREATE_ORDER",
+        "ORDERNUMBER": "364909",
+        "PRCODE": "0",
+        "SRCODE": "0",
+        "RESULTTEXT": "OK",
+    }
+    assert gateway_client.get_payment_result(url, key=public_key) == excepted_data
 
 
-def test_get_payment_result_with_invalid_signature(gateway_client, public_key_bytes):
+def test_get_payment_result_with_invalid_signature(gateway_client, public_key):
     url = (
         "https://localhost:5000/payment_callback?OPERATION=CREATE_ORDER&ORDERNUMBER=269700&PRCODE=0&SRCODE=0&RESULTTEXT"
         "=OK&DIGEST=qYn9bGBnOtdy%2BAgdOqYRRgwcF3ED3N5nqs4hsORz%2ByhyXLMdaPsgi1FNhoQPpOsLrP4bWJ3%2B%2FWNrh6MJ0a6Id82WIgn"
@@ -101,11 +108,10 @@ def test_get_payment_result_with_invalid_signature(gateway_client, public_key_by
         "abQbfpy8orVFMmLX4RkfkfJD3t5ozp0ITsYCyXXzZZO%2BqdwdHVzDDVRTlcq9HyR1yBtEVGvaE4lXipR68jbT5qr7zyeWBzuknf5yLJPREFxV"
         "%2F0aZ1A9JEP%2BL31lxRMCZDtFNt%2FaxdrjJG%2BjsKreCtrdDsCZ%2FwfwF4z6qEd74nNUOMLMbRF2a5w%2FeVE0U35cWxA%3D%3D"
     )
-    assert (
-        gateway_client.get_payment_result(url, key_bytes=public_key_bytes)
-        == "The payment communication was compromised."
-    )
+    assert gateway_client.get_payment_result(url, key=public_key) == {
+        "RESULT": "The payment communication was compromised."
+    }
 
 
-def test_get_payment_result_with_error(gateway_client, public_key_bytes):
+def test_get_payment_result_with_error(gateway_client, public_key):
     pass

@@ -12,10 +12,10 @@ def gateway_client():
 
 
 @pytest.fixture()
-def private_key_bytes():
+def private_key() -> bytes:
     return base64.b64decode(configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY)
 
 
 @pytest.fixture()
-def public_key_bytes():
+def public_key() -> bytes:
     return base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
