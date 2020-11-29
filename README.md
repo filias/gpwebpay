@@ -46,22 +46,22 @@ gw = gpwebpay.GpwebpayClient()
 # Get your merchant's private key
 private_key = os.getenv("GPWEBPAY_MERCHANT_PRIVATE_KEY")
 # Decode your private key with base64
-key_bytes = base64.b64decode(private_key)
+private_key_bytes = base64.b64decode(private_key)
 
 # Call this method to request a payment to GPWebPay.
 # Returns a response, redirect to response.url to go to GPWebPay's and make the payment
 # The order_number needs to be unique and the amount in cents.
-gw.request_payment(order_numer="123456", amount=999, key_bytes=key_bytes)
+gw.request_payment(order_numer="123456", amount=999, key=private_key_bytes)
 
 # Get GPWebPay's public key
 public_key = os.getenv("GPWEBPAY_PUBLIC_KEY")
 # Decode it with base64
-key_bytes = base64.b64decode(public_key)
+public_key_bytes = base64.b64decode(public_key)
 
 # Call this method to verify the response from GPWebPay
 # You need to pass here the url you received on the callback
 # Its querystring contains the data to verify the message
-gw.is_callback_valid(url, key_bytes=key_bytes)
+gw.get_payment_result(url, key=public_key_bytes)
 ```
 
 For more details refer to the [GPWebPay documentation](https://www.gpwebpay.cz/en/Download.html)
