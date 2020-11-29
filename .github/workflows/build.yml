@@ -20,7 +20,10 @@ jobs:
       with:
         python-version: 3.7
     - name: Install poetry
-      uses: dschep/install-poetry-action@v1.3
+      uses: snok/install-poetry@v1.1.1
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
     - name: Install dependencies
       run: |
         poetry install
@@ -31,16 +34,13 @@ jobs:
         GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE: ${{ secrets.GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE }}
         GPWEBPAY_PUBLIC_KEY: ${{ secrets.GPWEBPAY_PUBLIC_KEY }}
       run: |
+        source .venv/bin/activate
         pytest
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Lint with pylint
       run: |
+        source .venv/bin/activate
         inv lint
     - name: Code format with black
       run: |
+        source .venv/bin/activate
         inv format
