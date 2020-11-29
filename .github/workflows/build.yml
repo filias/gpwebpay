@@ -44,7 +44,9 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Lint with pylint
       run: |
+        source .venv/bin/activate
         inv lint
     - name: Code format with black
       run: |
+        source .venv/bin/activate
         inv format
