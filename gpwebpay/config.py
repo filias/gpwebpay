@@ -17,7 +17,7 @@ class Config:
         "GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE", ""
     )
     GPWEBPAY_PUBLIC_KEY = os.getenv("GPWEBPAY_PUBLIC_KEY", "")
-    GPWEBPAY_URL = "https://test.3dsecure.gpwebpay.com/pgw/order.do"
+    GPWEBPAY_URL = os.getenv("GPWEBPAY_URL", "https://test.3dsecure.gpwebpay.com/pgw/order.do")  # Default to test env
 
 
 configuration = Config()
