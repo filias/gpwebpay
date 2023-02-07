@@ -10,7 +10,7 @@ repository = "https://github.com/vintesk/gpwebpay"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-cryptography="2.8"
+cryptography="39.0.1"
 requests="2.23"
 python-dotenv = "^0.13.0"
 invoke = "^1.4.1"
