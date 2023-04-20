@@ -21,7 +21,7 @@ class GpwebpayClient:
     def __init__(self):
         self.data = None
 
-    def _create_payment_data(self, order_number: str = "", amount: int = 0) -> None:
+    def _create_payment_data(self, order_number: str = "", amount: int = 0, description: str | None = None) -> None:
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
         self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
@@ -31,6 +31,8 @@ class GpwebpayClient:
         self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
         self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
         self.data["URL"] = configuration.GPWEBPAY_MERCHANT_CALLBACK_URL
+        if description is not None:
+            self.data["DESCRIPTION"] = description
 
     def _create_message(self, data: dict, is_digest_1: bool = False) -> bytes:
         # Create message according to GPWebPay documentation (4.1.1)
