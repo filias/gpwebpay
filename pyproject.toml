@@ -9,21 +9,60 @@ readme = "README.md"
 repository = "https://github.com/vintesk/gpwebpay"
 
 [tool.poetry.dependencies]
-python = "^3.6"
-cryptography="2.8"
+python = ">=3.7,<4.0"
+cryptography="3.4.8"
 requests="2.23"
 python-dotenv = "^0.13.0"
-invoke = "^1.4.1"
-tox = "^3.17.1"
 
 [tool.poetry.dev-dependencies]
-black = "19.10b0"
-flake8 = "^3.8.1"
-pylint = "^2.5.3"
-pytest = "5.4.1"
+pytest = "7.4.3"
 pytest-cov = "^2.10.0"
 responses = "^0.10.12"
+ruff = "^0.1.8"
 
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--cov=gpwebpay --cov-report term --cov-fail-under=90"
+markers = ["slow: marks tests as slow", "fast: mark tests as fast"]
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"

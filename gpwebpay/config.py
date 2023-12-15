@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()  # Automaticaly loads the .env file
+load_dotenv()  # Automatically loads the .env file
 
 
 class Config:
@@ -17,7 +17,9 @@ class Config:
         "GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE", ""
     )
     GPWEBPAY_PUBLIC_KEY = os.getenv("GPWEBPAY_PUBLIC_KEY", "")
-    GPWEBPAY_URL = os.getenv("GPWEBPAY_URL", "https://test.3dsecure.gpwebpay.com/pgw/order.do")  # Default to test env
+    GPWEBPAY_URL = os.getenv(
+        "GPWEBPAY_URL", "https://test.3dsecure.gpwebpay.com/pgw/order.do"
+    )  # Default to test env
 
 
 configuration = Config()

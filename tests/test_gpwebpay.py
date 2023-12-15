@@ -1,7 +1,5 @@
-import urllib.parse
 from collections import OrderedDict
 
-import pytest
 import responses
 
 from gpwebpay.config import configuration
