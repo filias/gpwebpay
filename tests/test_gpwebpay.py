@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import responses
 
-from gpwebpay.config import configuration
+from gpwebpay.config import settings
 
 
 # Card for test payments
@@ -20,7 +20,7 @@ def test_init(gateway_client):
 
 @responses.activate
 def test_connection(gateway_client, private_key):
-    responses.add(responses.POST, configuration.GPWEBPAY_URL, status=200)
+    responses.add(responses.POST, settings.url, status=200)
     response = gateway_client.request_payment(
         order_number="123456", amount=10, key=private_key
     )
@@ -28,7 +28,7 @@ def test_connection(gateway_client, private_key):
 
 
 def test_create_data(gateway_client, monkeypatch):
-    monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
+    monkeypatch.setattr(settings, "merchant_id", "1234567890")
 
     expected_data = OrderedDict(
         MERCHANTNUMBER="1234567890",
@@ -44,7 +44,7 @@ def test_create_data(gateway_client, monkeypatch):
 
 
 def test_create_message(gateway_client, monkeypatch):
-    monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
+    monkeypatch.setattr(settings, "merchant_id", "1234567890")
 
     expected_message = (
         b"1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/"
@@ -56,7 +56,7 @@ def test_create_message(gateway_client, monkeypatch):
 
 
 def test_sign_data(gateway_client, private_key, monkeypatch):
-    monkeypatch.setattr(configuration, "GPWEBPAY_MERCHANT_ID", "1234567890")
+    monkeypatch.setattr(settings, "merchant_id", "1234567890")
 
     # Created with java -jar digestProc.jar -s
     # "1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/payment_callback"

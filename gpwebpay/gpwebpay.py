@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography import x509
 
-from .config import configuration
+from .config import settings
 
 _logger = logging.getLogger(__name__)
 
@@ -24,20 +24,20 @@ class GpwebpayClient:
     def _create_payment_data(self, order_number: str = "", amount: int = 0) -> None:
         """To create the DIGEST we need to keep the order of the params"""
         self.data = OrderedDict()
-        self.data["MERCHANTNUMBER"] = configuration.GPWEBPAY_MERCHANT_ID
+        self.data["MERCHANTNUMBER"] = settings.merchant_id
         self.data["OPERATION"] = "CREATE_ORDER"
         self.data["ORDERNUMBER"] = order_number
         self.data["AMOUNT"] = str(amount)
-        self.data["CURRENCY"] = configuration.GPWEBPAY_CURRENCY
-        self.data["DEPOSITFLAG"] = configuration.GPWEBPAY_DEPOSIT_FLAG
-        self.data["URL"] = configuration.GPWEBPAY_MERCHANT_CALLBACK_URL
+        self.data["CURRENCY"] = settings.currency
+        self.data["DEPOSITFLAG"] = settings.deposit_flag
+        self.data["URL"] = settings.merchant_callback_url
 
     def _create_message(self, data: dict, is_digest_1: bool = False) -> bytes:
         # Create message according to GPWebPay documentation (4.1.1)
         message = "|".join(data.values())
 
         if is_digest_1:  # Add the MERCHANT_ID
-            message += "|" + configuration.GPWEBPAY_MERCHANT_ID
+            message += "|" + settings.merchant_id
 
         return message.encode("utf-8")
 
@@ -45,7 +45,7 @@ class GpwebpayClient:
         """Sign the message according to GPWebPay documentation"""
         private_key = serialization.load_pem_private_key(
             key,
-            password=configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE.encode(
+            password=settings.merchant_private_key_passphrase.encode(
                 "UTF-8"
             ),
             backend=default_backend(),
@@ -82,7 +82,7 @@ class GpwebpayClient:
             "Content-Type": "application/x-www-form-urlencoded",
         }
         response = requests.post(
-            configuration.GPWEBPAY_URL, data=self.data, headers=headers
+            settings.url, data=self.data, headers=headers
         )
 
         return response

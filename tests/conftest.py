@@ -2,7 +2,7 @@ import base64
 
 import pytest
 
-from gpwebpay.config import configuration
+from gpwebpay.config import settings
 from gpwebpay.gpwebpay import GpwebpayClient
 
 
@@ -13,9 +13,9 @@ def gateway_client():
 
 @pytest.fixture()
 def private_key() -> bytes:
-    return base64.b64decode(configuration.GPWEBPAY_MERCHANT_PRIVATE_KEY)
+    return base64.b64decode(settings.merchant_private_key)
 
 
 @pytest.fixture()
 def public_key() -> bytes:
-    return base64.b64decode(configuration.GPWEBPAY_PUBLIC_KEY)
+    return base64.b64decode(settings.public_key)

@@ -1,25 +1,19 @@
-import os
-
-from dotenv import load_dotenv
-
-load_dotenv()  # Automatically loads the .env file
+from pydantic import HttpUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Config:
-    GPWEBPAY_CURRENCY = os.getenv("GPWEBPAY_CURRENCY", "978")  # EUR
-    GPWEBPAY_DEPOSIT_FLAG = os.getenv("GPWEBPAY_DEPOSIT_FLAG", "1")
-    GPWEBPAY_MERCHANT_CALLBACK_URL = os.getenv(
-        "GPWEBPAY_MERCHANT_CALLBACK_URL", "https://localhost:5000/payment_callback"
-    )
-    GPWEBPAY_MERCHANT_ID = os.getenv("GPWEBPAY_MERCHANT_ID", "")
-    GPWEBPAY_MERCHANT_PRIVATE_KEY = os.getenv("GPWEBPAY_MERCHANT_PRIVATE_KEY", "")
-    GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE = os.getenv(
-        "GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE", ""
-    )
-    GPWEBPAY_PUBLIC_KEY = os.getenv("GPWEBPAY_PUBLIC_KEY", "")
-    GPWEBPAY_URL = os.getenv(
-        "GPWEBPAY_URL", "https://test.3dsecure.gpwebpay.com/pgw/order.do"
-    )  # Default to test env
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_prefix='gpwebpay_')
+
+    currency: str = "978"  # EUR
+    deposit_flag: str = "1"
+    merchant_callback_url: HttpUrl = "https://localhost:5000/payment_callback"
+    merchant_id: str = ""
+    merchant_private_key: str = ""
+    merchant_private_key_passphrase: str = ""
+    public_key: str = ""
+    url: HttpUrl = "https://test.3dsecure.gpwebpay.com/pgw/order.do"  # Default to test env
+    response_url: HttpUrl = "https://gpwebpay.net"
 
 
-configuration = Config()
+settings = Settings()
