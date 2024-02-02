@@ -1,9 +1,9 @@
 # gpwebpay
 ![Build](https://github.com/vintesk/gpwebpay/workflows/build/badge.svg)
 ![Tests](https://github.com/vintesk/gpwebpay/workflows/tests/badge.svg)
-[![codecov](https://codecov.io/gh/vintesk/gpwebpay/branch/master/graph/badge.svg)](https://codecov.io/gh/vintesk/gpwebpay)
+[![codecov](https://codecov.io/gh/filias/gpwebpay/branch/master/graph/badge.svg)](https://codecov.io/gh/filias/gpwebpay)
 [![GitHub contributors](https://img.shields.io/github/contributors/vintesk/gpwebpay)](https://github.com/vintesk/gpwebpay/graphs/contributors/)
-[![Python 3.6+](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/downloads/release/python-370/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://https://github.com/psf/black)
 
