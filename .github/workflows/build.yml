@@ -36,11 +36,5 @@ jobs:
       run: |
         source .venv/bin/activate
         pytest
-    - name: Lint with pylint
-      run: |
-        source .venv/bin/activate
-        inv lint
-    - name: Code format with black
-      run: |
-        source .venv/bin/activate
-        inv format
+    - name: Ruff
+      uses: chartboost/ruff-action@v1

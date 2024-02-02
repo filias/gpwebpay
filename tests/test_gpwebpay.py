@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import responses
-from pydantic_core import Url
 
 from gpwebpay.config import settings
 
