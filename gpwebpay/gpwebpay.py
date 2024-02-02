@@ -30,7 +30,7 @@ class GpwebpayClient:
         self.data["AMOUNT"] = str(amount)
         self.data["CURRENCY"] = settings.currency
         self.data["DEPOSITFLAG"] = settings.deposit_flag
-        self.data["URL"] = settings.merchant_callback_url
+        self.data["URL"] = str(settings.merchant_callback_url)
 
     def _create_message(self, data: dict, is_digest_1: bool = False) -> bytes:
         # Create message according to GPWebPay documentation (4.1.1)
