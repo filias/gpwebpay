@@ -21,7 +21,7 @@ def test_init(gateway_client):
 
 @responses.activate
 def test_connection(gateway_client, private_key):
-    responses.add(responses.POST, settings.url, status=200)
+    responses.add(responses.POST, str(settings.url), status=200)
     response = gateway_client.request_payment(
         order_number="123456", amount=10, key=private_key
     )
