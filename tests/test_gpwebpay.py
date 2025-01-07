@@ -11,7 +11,7 @@ from gpwebpay.config import settings
 # CVC2: 200
 
 # Example message = "<GPWEBPAY_MERCHANT_ID>|CREATE_ORDER|<order_number>|<amount>|
-# <GPWEBPAY_CURRENCY>|<GPWEBPAY_DEPOSIT_FLAG>|<GPWEBPAY_RESPONSE_URL>"
+# <GPWEBPAY_CURRENCY>|<GPWEBPAY_DEPOSIT_FLAG>|<GPWEBPAY_RESPONSE_URL>|[description]"
 
 
 def test_init(gateway_client):
@@ -38,8 +38,9 @@ def test_create_data(gateway_client, monkeypatch):
         CURRENCY="978",
         DEPOSITFLAG="1",
         URL="https://localhost:5000/payment_callback",
+        DESCRIPTION="Very important payment",
     )
-    gateway_client._create_payment_data(order_number="123456", amount=10)
+    gateway_client._create_payment_data(order_number="123456", amount=10, description="Very important payment")
     assert gateway_client.data == expected_data
 
 
@@ -50,7 +51,7 @@ def test_create_message(gateway_client, monkeypatch):
         b"1234567890|CREATE_ORDER|123456|10|978|1|https://localhost:5000/"
         b"payment_callback"
     )
-    gateway_client._create_payment_data(order_number="123456", amount=10)
+    gateway_client._create_payment_data(order_number="123456", amount=10, description="Very important payment")
     message = gateway_client._create_message(gateway_client.data)
     assert message == expected_message
 
