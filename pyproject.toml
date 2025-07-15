@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gpwebpay"
-version = "0.1.4"
+version = "0.1.6"
 description = "GPWebPay Gateway access with Python"
 license = "MIT"
 authors = ["Filipa Andrade <filipa.andrade@gmail.com>"]
@@ -9,9 +9,9 @@ readme = "README.md"
 repository = "https://github.com/filias/gpwebpay"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-cryptography="3.4.8"
-requests="2.23"
+python = ">=3.8"
+cryptography=">=3.4.8"
+requests=">=2.23"
 python-dotenv = "^0.21.0"
 pydantic-settings = "^2.1.0"
 

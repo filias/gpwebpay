@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix='gpwebpay_')
+    model_config = SettingsConfigDict(env_file=".env", env_prefix='gpwebpay_', extra="ignore")
 
     currency: str = "978"  # EUR
     deposit_flag: str = "1"
