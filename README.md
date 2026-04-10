@@ -1,86 +1,80 @@
 # gpwebpay
-![Build](https://github.com/vintesk/gpwebpay/workflows/build/badge.svg)
-![Tests](https://github.com/vintesk/gpwebpay/workflows/tests/badge.svg)
-[![codecov](https://codecov.io/gh/filias/gpwebpay/branch/master/graph/badge.svg)](https://codecov.io/gh/filias/gpwebpay)
-[![GitHub contributors](https://img.shields.io/github/contributors/vintesk/gpwebpay)](https://github.com/vintesk/gpwebpay/graphs/contributors/)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/release/python-380/)
+
+[![ci](https://github.com/filias/gpwebpay/actions/workflows/ci.yml/badge.svg)](https://github.com/filias/gpwebpay/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/gpwebpay.svg)](https://pypi.org/project/gpwebpay/)
+[![Python versions](https://img.shields.io/pypi/pyversions/gpwebpay.svg)](https://pypi.org/project/gpwebpay/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
-[![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://https://github.com/psf/black)
 
-GPWebPay Gateway access with Python.
+A modern Python client for the [GPWebPay](https://www.gpwebpay.cz/en/) payment gateway.
 
-This library is meant to be used by merchants that own a webshop and use GpWebPay as its payment gateway.
-At the moment there are code examples for using GPWebPay in a webshop with PHP, where developers can see how to
-sign and verify messages exchanged with the payment gateway.
+`gpwebpay` handles the RSA signing of outgoing payment requests and the verification
+of signed callbacks coming back from the gateway, so you can integrate GPWebPay into
+your Python webshop without dealing with the cryptography directly.
 
-With this package you can also do it in Python and you can find an example of its usage in a webshop in the 
-[demoshop repository](https://github.com/vintesk/gpwebpay_demoshop) 
+## Installation
 
-Configuration
--------
-
-Environmental variables needed:
-```
-GPWEBPAY_MERCHANT_ID = "0987654321"     # Your merchant's id from gpwebpay
-GPWEBPAY_MERCHANT_PRIVATE_KEY = ""      # Your merchant's private key base64 encoded (cat gpwebpay-pvk.key | base64 -w0)
-GPWEBPAY_PUBLIC_KEY = ""                # GPWebPay's public key base64 encoded (cat gpwebpay-pub.key | base64 -w0)
-GPWEBPAY_RESPONSE_URL = ""              # The url for the callback
-```
-Optional:
-```
-GPWEBPAY_CURRENCY = "978"                       # If not set EUR is the default currency
-GPWEBPAY_DEPOSIT_FLAG = "1"                     # Requests instant payment
-GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE = ""   # If any
+```bash
+pip install gpwebpay
+# or
+uv add gpwebpay
 ```
 
-To use this package create a GpwebpayClient:
+## Usage
 
 ```python
 import base64
 import os
 
-from gpwebpay import gpwebpay
+from gpwebpay import GpwebpayClient, InvalidSignatureError
 
-gw = gpwebpay.GpwebpayClient()
+client = GpwebpayClient(
+    merchant_id=os.environ["GPWEBPAY_MERCHANT_ID"],
+    private_key=base64.b64decode(os.environ["GPWEBPAY_MERCHANT_PRIVATE_KEY"]),
+    private_key_password=os.environ.get("GPWEBPAY_MERCHANT_PRIVATE_KEY_PASSPHRASE"),
+    gateway_public_key=base64.b64decode(os.environ["GPWEBPAY_PUBLIC_KEY"]),
+    callback_url="https://shop.example.com/payment_callback",
+    # gateway_url defaults to the test environment; pass the production URL when ready
+)
 
-# Get your merchant's private key
-private_key = os.getenv("GPWEBPAY_MERCHANT_PRIVATE_KEY")
-# Decode your private key with base64
-private_key_bytes = base64.b64decode(private_key)
+# Send a signed payment request to the gateway. Amount is in cents.
+response = client.request_payment(order_number="123456", amount=999)
+# Redirect the user's browser to the URL the gateway responded with:
+# return redirect(str(response.url))
 
-# Call this method to request a payment to GPWebPay.
-# Returns a response, redirect to response.url to go to GPWebPay's and make the payment
-# The order_number needs to be unique and the amount in cents.
-gw.request_payment(order_numer="123456", amount=999, key=private_key_bytes)
-
-# Get GPWebPay's public key
-public_key = os.getenv("GPWEBPAY_PUBLIC_KEY")
-# Decode it with base64
-public_key_bytes = base64.b64decode(public_key)
-
-# Call this method to verify the response from GPWebPay
-# You need to pass here the url you received on the callback
-# Its querystring contains the data to verify the message
-gw.get_payment_result(url, key=public_key_bytes)
+# In your callback handler, verify the response:
+try:
+    result = client.parse_callback(callback_url)
+    # result is a dict of fields, e.g. {"OPERATION": "...", "PRCODE": "0", ...}
+except InvalidSignatureError:
+    # The callback was tampered with — reject it.
+    ...
 ```
 
-For more details refer to the [GPWebPay documentation](https://www.gpwebpay.cz/en/Download.html)
+### Configuration
 
+| Argument | Required | Default | Description |
+|---|---|---|---|
+| `merchant_id` | yes | — | Your merchant ID issued by GPWebPay |
+| `private_key` | yes | — | PEM-encoded RSA private key bytes |
+| `gateway_public_key` | yes | — | PEM-encoded x509 certificate from GPWebPay |
+| `callback_url` | yes | — | Where GPWebPay should redirect users after payment |
+| `gateway_url` | no | test gateway | Production: `https://3dsecure.gpwebpay.com/pgw/order.do` |
+| `private_key_password` | no | `None` | Passphrase for the private key |
+| `currency` | no | `"978"` (EUR) | ISO 4217 numeric currency code |
+| `deposit_flag` | no | `"1"` | `"1"` requests instant payment |
 
-Tests
--------
+## Development
 
-To run the tests:
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+
 ```bash
- pytest
- ```
-
-
-Development
--------
-We use poetry to manage dependencies, packaging and publishing.
-If you want to develop locally [install poetry](https://python-poetry.org/docs/#installation) and run:
-
-```bash
-poetry install
+uv sync               # install dependencies
+uv run pytest         # run tests
+uv run ruff check .   # lint
+uv run ruff format .  # format
+uv run mypy gpwebpay  # type check
 ```
+
+## License
+
+MIT
