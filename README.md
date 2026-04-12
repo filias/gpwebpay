@@ -1,9 +1,13 @@
 # gpwebpay
 
 [![ci](https://github.com/filias/gpwebpay/actions/workflows/ci.yml/badge.svg)](https://github.com/filias/gpwebpay/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/filias/gpwebpay)
 [![PyPI version](https://img.shields.io/pypi/v/gpwebpay.svg)](https://pypi.org/project/gpwebpay/)
-[![Python versions](https://img.shields.io/pypi/pyversions/gpwebpay.svg)](https://pypi.org/project/gpwebpay/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
+[![PyPI downloads](https://img.shields.io/pypi/dm/gpwebpay.svg)](https://pypi.org/project/gpwebpay/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776ab.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
+[![types](https://img.shields.io/badge/types-included-blue.svg)](https://peps.python.org/pep-0561/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 A modern Python client for the [GPWebPay](https://www.gpwebpay.cz/en/) payment gateway.
 
